@@ -8,7 +8,10 @@ CREATE TABLE users (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL,
+  edited_at TIMESTAMP NOT NULL,
+  rol INT NULL,
   PRIMARY KEY (id)
+  FOREIGN KEY (rol) REFERENCES roles(id)
 );
 
 CREATE TABLE roles (
@@ -23,6 +26,7 @@ CREATE TABLE dea_points (
     ubication VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     edited_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 create TABLE posts (
