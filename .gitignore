@@ -1,0 +1,4 @@
+.DS_Store
+api-dea/.gitignore
+api-dea/.env
+dea-app/.gitignore
