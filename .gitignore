@@ -1,8 +1,12 @@
-.DS_Store
 api-dea/.gitignore
 api-dea/node_modules
 api-dea/.env
 api-dea/package-lock.json
+api-dea/.DS_Store
 
 api-dea/.env
 dea-app/.gitignore
+
+
+.DS_Store
+.gitignore
