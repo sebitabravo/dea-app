@@ -6,9 +6,9 @@ export async function connect() {
     const connection = await createPool({
         host: 'localhost',
         user: 'donnachie',
-        database: 'calendar',
+        database: 'dea',
         port: 8889,
-        connectionLimit: 10
+        connectionLimit: 10000
     })
 
     return connection;

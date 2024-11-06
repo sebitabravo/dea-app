@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { connect } from "../db";
 import { User } from "../interface/User.js";
 
-const table = 'employees'
+const table = 'users'
 
-export const getEmployees = async (_: Request, res: Response) => {
+export const getUsers = async (_: Request, res: Response) => {
     try {
         const pool = await connect();
         const [result] = await pool.query(`SELECT * FROM ${table} GROUP BY id`)
@@ -15,7 +15,7 @@ export const getEmployees = async (_: Request, res: Response) => {
     }
 }
 
-export const createEmployee = async (req: Request, res: Response) => {
+export const CreateUser = async (req: Request, res: Response) => {
     const newEmployee: User = req.body.employee;
     console.log(newEmployee);
 

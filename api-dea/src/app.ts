@@ -2,7 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 
 // Routes
-import IndexRoutes from './routes/index.routes';
+import deaPointsRoutes from './routes/deaPoints.routes';
+import userRoutes from './routes/users.routes';
 
 export class App {
 
@@ -21,10 +22,13 @@ export class App {
 
     middlewares() {
         this.app.use(morgan('dev'));
+        this.app.use(express.json());
     }
 
     routes() {
-        this.app.use(IndexRoutes);
+        // this.app.use(IndexRoutes);
+        this.app.use(userRoutes);
+        this.app.use(deaPointsRoutes);
     }
 
     async listen() {

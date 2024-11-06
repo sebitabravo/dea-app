@@ -3,10 +3,9 @@ import { indexWelcome, ping } from "../controllers/index.controller";
 
 const router = Router();
 
-router.route('/')
+router.route('/') 
     .get(indexWelcome);
 
  router.get('/ping', ping);
-    
 
 export default router;

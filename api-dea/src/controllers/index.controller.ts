@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { connect } from "../db";
 
-export const indexWelcome = (_req: Request, res: Response) => {
+export const indexWelcome = async (_: Request, res: Response) => {
     return res.json({ message: 'Hello World' });
 }
 
-export const ping = async (_req: Request, res: Response): Promise<Response> => {
+export const ping = async (_: Request, res: Response) => {
     const pool = await connect();
-    const [result] = await pool.query('SELECT 10 + 5')
+    const [result] = await pool.query('SHOW TABLES')
     return res.json(result)
 }
-
