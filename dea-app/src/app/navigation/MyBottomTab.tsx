@@ -4,6 +4,7 @@ import { ProfileScreen } from '@/presentation/features/ProfileScreen/ProfileScre
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { MyStack } from './MyStack';
 
 const MyTab = createBottomTabNavigator();
 
@@ -21,7 +22,7 @@ export function MyBottomTab() {
                         lazy: true,
                     }}
                 >
-                <MyTab.Screen name="Map" component={MapScreen} />
+                <MyTab.Screen name="MapStack" component={MyStack} />
                 <MyTab.Screen name="Info" component={MapScreen} />
                 <MyTab.Screen name="Profile" component={ProfileScreen} />
             </MyTab.Navigator>

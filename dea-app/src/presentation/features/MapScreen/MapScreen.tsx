@@ -1,21 +1,20 @@
 import { useFetchData } from '@/data/hooks/useFetchData';
 import { getGetDeaPoints } from '@/data/services/deaPointsServices';
-import { Ionicons } from '@expo/vector-icons'; // Para los iconos
-import * as Location from 'expo-location'; // Si usas expo
-import { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { DeaPoints } from '@/domain/interfaces/DeaPoints';
+import { useNavigation } from '@react-navigation/native';
+import * as Location from 'expo-location';
+import * as React from 'react';
+import { Alert, Button, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
 import { DeaPoint } from './components/DeaPoint';
 
 export function MapScreen() {
-    const [origin, setOrigin] = useState<{ latitude: number; longitude: number }>({
-        latitude: -38.7359,
-        longitude: -72.5908,
-    });
-    const [destination, setDestination] = useState<{ latitude: number; longitude: number } | null>(null);
-    const [modeGo, setModeGo] = useState(false);
-    const mapRef = useRef<MapView | null>(null); // Referencia al mapa
+    const navigation = useNavigation();
+    const [modalVisible, setModalVisible] = React.useState(false);
+    const [origin, setOrigin] = React.useState({ latitude: -38.7359, longitude: -72.5908 });
+    const [selectedPoint, setSelectedPoint] = React.useState<{ latitude: number; longitude: number } | null>(null);
+    const [modeGo, setModeGo] = React.useState(false);
+    const mapRef = React.useRef<MapView | null>(null);
 
     const initialRegion: Region = {
         latitude: origin.latitude,
@@ -24,34 +23,25 @@ export function MapScreen() {
         longitudeDelta: 0.005,
     };
 
-    const { data, loading } = useFetchData(getGetDeaPoints);
+    const { data: deaPointsData, loading } = useFetchData(getGetDeaPoints);
 
-    console.log(data)
-
-    // Puntos DEA
-    const deaPoints = [
-        { id: 1, latitude: -38.7409, longitude: -72.5918, title: "DEA 1", description: "Punto DEA 1" },
-        { id: 2, latitude: -38.7375, longitude: -72.5932, title: "DEA 2", description: "Punto DEA 2" },
-        { id: 3, latitude: -38.7388, longitude: -72.5889, title: "DEA 3", description: "Punto DEA 3" },
-        { id: 4, latitude: -38.7367, longitude: -72.5902, title: "DEA 4", description: "Punto DEA 4" },
-        { id: 5, latitude: -38.7395, longitude: -72.5925, title: "DEA 5", description: "Punto DEA 5" },
-    ];
+    React.useEffect(() => {
+        requestLocationPermission();
+    }, []);
 
     // Solicitar permisos de ubicación y obtener la posición del usuario
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permisos denegados', 'No se puede acceder a la ubicación.');
-                return;
-            }
-            let location = await Location.getCurrentPositionAsync({});
-            setOrigin({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            });
-        })();
-    }, []);
+    const requestLocationPermission = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permisos denegados', 'No se puede acceder a la ubicación.');
+            return;
+        }
+        const location = await Location.getCurrentPositionAsync({});
+        setOrigin({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        });
+    };
 
     // Función para centrar la vista en la ubicación actual
     const centerMapOnUser = () => {
@@ -65,38 +55,30 @@ export function MapScreen() {
         }
     };
 
-    // Función para manejar la selección de un DEA y trazar la ruta
-    const handlePressMarker = (point: { latitude: number; longitude: number, title: string }) => {
-        setDestination({
+    // Maneja el evento de presionar un marcador
+    const handlePressMarker = (point: DeaPoints) => {
+        setSelectedPoint({
             latitude: point.latitude,
-            longitude: point.longitude,
+            longitude: point.longitude
         });
-        // Alert.alert('Iniciar ruta', `Has seleccionado el ${point.title}`);
+        setModalVisible(true);
     };
 
-    // Seguir la ubicación del usuario en tiempo real en modo "Ir"
-    useEffect(() => {
-        if (modeGo) {
-            const subscription = Location.watchPositionAsync(
-                { accuracy: Location.Accuracy.High, distanceInterval: 1 },
-                (location) => {
-                    setOrigin({
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                    });
-                }
-            );
-            // return () => subscription?.remove();
+    // Navegación dentro de la aplicación
+    const handleNavigate = () => {
+        setModalVisible(false);
+        if (selectedPoint) {
+            setModeGo(true);
         }
-    }, [modeGo]);
+    };
 
-    // Función para iniciar el modo "Ir" 
-    const startNavigation = () => {
-        if (!destination) {
-            Alert.alert('Error', 'Selecciona un punto DEA primero.');
-            return;
+    // Navegación con Waze
+    const handleNavigateWithWaze = () => {
+        setModalVisible(false);
+        if (selectedPoint) {
+            const wazeUrl = `https://waze.com/ul?ll=${selectedPoint.latitude},${selectedPoint.longitude}&navigate=yes`;
+            Linking.openURL(wazeUrl);
         }
-        setModeGo(true);
     };
 
     return (
@@ -108,7 +90,6 @@ export function MapScreen() {
                 showsUserLocation={true}
                 followsUserLocation={modeGo}
             >
-                {/* Marcador de origen */}
                 <Marker
                     coordinate={origin}
                     title="Origen"
@@ -117,10 +98,13 @@ export function MapScreen() {
                 />
 
                 {/* Marcadores de los puntos DEA */}
-                {deaPoints.map(point => (
+                {deaPointsData?.map((point: DeaPoints) => (
                     <Marker
                         key={point.id}
-                        coordinate={{ latitude: point.latitude, longitude: point.longitude }}
+                        coordinate={{
+                            latitude: point.latitude,
+                            longitude: point.longitude,
+                        }}
                         title={point.title}
                         description={point.description}
                         onPress={() => handlePressMarker(point)}
@@ -129,25 +113,42 @@ export function MapScreen() {
                     </Marker>
                 ))}
 
-                <MapViewDirections
+                {/* <MapViewDirections
                     origin={origin}
-                    destination={destination || origin}
+                    destination={selectedPoint || origin}
                     apikey='AIzaSyDnjMYiWwRaoIGegAq5IAWFvJsgAAidwEw'
                     strokeWidth={3}
                     strokeColor="#FF0000"
-                />
+                /> */}
             </MapView>
 
-
-            {/* Botón para centrar la vista en la ubicación del usuario */}
-            <TouchableOpacity style={s.centerButton} onPress={centerMapOnUser}>
-                <Ionicons name="locate" size={24} color="white" />
+            <TouchableOpacity style={s.createPointButton} onPress={() => navigation.navigate('CreatePoint')}>
+                <Text>Mapa</Text>
             </TouchableOpacity>
 
-            {/* Botón para iniciar el modo "Ir" */}
-            <TouchableOpacity style={s.goButton} onPress={startNavigation}>
+            {/* <TouchableOpacity style={s.centerButton} onPress={centerMapOnUser}>
+                <Ionicons name="locate" size={24} color="white" />
+            </TouchableOpacity> */}
+
+            <TouchableOpacity style={s.goButton} onPress={handleNavigate}>
                 <Text style={s.goButtonText}>Iniciar</Text>
             </TouchableOpacity>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={s.modalContainer}>
+                    <View style={s.modalView}>
+                        <Text>Elige una opción</Text>
+                        <Button title="IR" onPress={handleNavigate} />
+                        <Button title="Ir con Waze" onPress={handleNavigateWithWaze} />
+                        <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -156,6 +157,14 @@ const s = StyleSheet.create({
     map: {
         height: '100%',
         width: '100%',
+    },
+    createPointButton: {
+        position: 'absolute',
+        top: 50,
+        right: 10,
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
     },
     centerButton: {
         position: 'absolute',
@@ -178,5 +187,21 @@ const s = StyleSheet.create({
     goButtonText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
 });
