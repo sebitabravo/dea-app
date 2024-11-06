@@ -1,4 +1,6 @@
-{
+
+import 'dotenv/config';
+export default{
   "expo": {
     "name": "dea-app",
     "slug": "dea-app",
@@ -22,6 +24,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "GOOGLE_MAPS_API_KEY": process.env.GOOGLE_MAPS_API_KEY
     }
   }
 }
