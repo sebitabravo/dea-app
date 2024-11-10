@@ -4,6 +4,7 @@ import morgan from 'morgan';
 // Routes
 import authRoutes from './routes/auth.routes';
 import deaPointsRoutes from './routes/deaPoints.routes';
+import postRoutes from './routes/posts.routes';
 import userRoutes from './routes/users.routes';
 
 export class App {
@@ -31,6 +32,7 @@ export class App {
         this.app.use(userRoutes);
         this.app.use(deaPointsRoutes);
         this.app.use(authRoutes);
+        this.app.use(postRoutes);
     }
 
     async listen() {

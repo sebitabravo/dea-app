@@ -1,26 +1,27 @@
 import bcrypt from 'bcrypt';
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { connect } from "../db";
 import { User } from '../models/User';
 
 const table = 'users';
 
-export const login = async (req: Request, res: Response) => {
+export const login: RequestHandler = async (req: Request, res: Response) => {
     const { email, password }: User = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ message: 'Please. Send your email and password' });
+        res.status(400).json({ message: 'Please. Send your email and password' });
+        return;
     }
     
     try {
         const pool = await connect();
-        const [result] = await pool.query(`SELECT * FROM ${table} WHERE email = ? AND password = ?`, [email, password])
-        res.json(result)
+        const [result] = await pool.query(`SELECT * FROM ${table} WHERE email = ? AND password = ?`, [email, password]);
+        res.json(result);
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ message: 'Internal server error' })
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 export const register = async (req: Request, res: Response) => {
     const { username, email, password }: User = req.body;
