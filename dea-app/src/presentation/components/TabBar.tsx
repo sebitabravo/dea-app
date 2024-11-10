@@ -62,7 +62,7 @@ export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
                                 return (
                                     <UserIcon width={26} height={26} />
                                 )
-                            case 'Info':
+                            case 'Posts':
                                 return (
                                     <InfoIcon width={26} height={26} />
                                 )

@@ -1,20 +1,21 @@
 
+import { AuthStackParamList } from '@/app/navigation/navigation';
 import { MyButton } from '@/presentation/components/MyButton';
 import { AuthLayout } from '@/presentation/layouts/AuthLayout';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+type AuthScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export function AuthScreen() {
-    const { navigate } = useNavigation();
+    const { navigate } = useNavigation<AuthScreenNavigationProp>();
 
     return (
-        <AuthLayout>
-
-            <Image
-                className='w-full h-96 object-cover mt-16'
-                source={require('@/app/assets/backgrounds/auth.jpg')} />
+        <AuthLayout
+            className='flex-1 flex items-center justify-center'
+        >
 
             <Text
                 className='text-6xl font-extrabold text-[#4500D9] mt-5'
@@ -33,9 +34,12 @@ export function AuthScreen() {
                         onPress={() => navigate('Login')}
                     />
                 </View>
-                {/* <View>
-                    <MyButton title='Registrarse' />
-                </View> */}
+                <View>
+                    <MyButton
+                        title='Registrarse'
+                        onPress={() => navigate('Register')}
+                    />
+                </View>
             </View>
 
         </AuthLayout>

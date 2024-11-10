@@ -6,8 +6,9 @@ import { StyleSheet } from 'react-native';
 import { BottomSheetProvider } from '@/presentation/context/BottomSheetContext';
 import { CreateDeaPointStack } from '@/presentation/features/MapScreen/stacks/CreateDeaPointStack';
 import { MyBottomTab } from './MyBottomTab';
+import { AppStackParamList } from './navigation';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export function MyStack() {
     return (

@@ -1,11 +1,12 @@
+import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout'
 import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 
 export function PostsScreen() {
     return (
-        <View>
+        <PrimaryLayout>
             <Text>PostsScreen</Text>
-        </View>
+        </PrimaryLayout>
     )
 }
 

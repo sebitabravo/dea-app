@@ -1,5 +1,6 @@
 import { TabBar } from '@/presentation/components/TabBar';
 import { MapScreen } from '@/presentation/features/MapScreen/MapScreen';
+import { PostsScreen } from '@/presentation/features/PostsScreen/PostsScreen';
 import { ProfileScreen } from '@/presentation/features/ProfileScreen/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
@@ -22,7 +23,7 @@ export function MyBottomTab() {
                     }}
                 >
                 <MyTab.Screen name="Map" component={MapScreen} />
-                {/* <MyTab.Screen name="Info" component={MapScreen} /> */}
+                <MyTab.Screen name="Posts" component={PostsScreen} />
                 <MyTab.Screen name="Profile" component={ProfileScreen} />
             </MyTab.Navigator>
         </View>
