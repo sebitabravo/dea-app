@@ -3,32 +3,35 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
 // Screens and Stacks
-import { MapScreen } from '@/presentation/features/MapScreen/MapScreen';
+import { BottomSheetProvider } from '@/presentation/context/BottomSheetContext';
 import { CreateDeaPointStack } from '@/presentation/features/MapScreen/stacks/CreateDeaPointStack';
+import { MyBottomTab } from './MyBottomTab';
 
 const Stack = createNativeStackNavigator();
 
 export function MyStack() {
     return (
         <>
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false,
-                }}
-            >
-                <Stack.Screen name="Map" component={MapScreen} />
-                <Stack.Screen
-                    name="CreatePoint"
-                    component={CreateDeaPointStack}
-                    options={{
-                        presentation: 'fullScreenModal',
+            <BottomSheetProvider>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerShown: false,
                     }}
-                />
-            </Stack.Navigator>
+                >
+                    <Stack.Screen name="Main" component={MyBottomTab} />
+                    <Stack.Screen
+                        name="CreatePoint"
+                        component={CreateDeaPointStack}
+                        options={{
+                            presentation: 'fullScreenModal',
+                        }}
+                    />
+                </Stack.Navigator>
+            </BottomSheetProvider>
         </>
     )
 }
 
 const s = StyleSheet.create({
-    
+
 })

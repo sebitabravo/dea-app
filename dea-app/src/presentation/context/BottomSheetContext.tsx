@@ -1,18 +1,27 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useColorScheme } from 'nativewind';
-import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useRef, useState } from 'react';
 import { Keyboard, Text } from 'react-native';
 
-const BottomSheetContext = createContext();
+interface BottomSheetContextProps {
+    openBottomSheet: (content: ReactNode, customSnapPoints?: string[]) => void;
+    closeBottomSheet: () => void;
+}
 
-export const BottomSheetProvider = ({ children }) => {
+const BottomSheetContext = createContext<BottomSheetContextProps | undefined>(undefined);
+
+interface BottomSheetProviderProps {
+    children: ReactNode;
+}
+
+export const BottomSheetProvider: React.FC<BottomSheetProviderProps> = ({ children }) => {
     const { colorScheme } = useColorScheme();
-    const sheetRef = useRef(null);
+    const sheetRef = useRef<BottomSheet>(null);
     const [isOpen, setIsOpen] = useState(false);
-    const [bottomSheetContent, setBottomSheetContent] = useState(<Text>Bottom Sheet</Text>);
-    const [snapPoints, setSnapPoints] = useState(["90%"]); 
+    const [bottomSheetContent, setBottomSheetContent] = useState<ReactNode>(<Text>Bottom Sheet</Text>);
+    const [snapPoints, setSnapPoints] = useState<string[]>(["90%"]);
 
-    const openBottomSheet = (content, customSnapPoints) => {
+    const openBottomSheet = (content: ReactNode, customSnapPoints?: string[]) => {
         setBottomSheetContent(content);
         setSnapPoints(customSnapPoints || ["70%"]);
         setIsOpen(true);
@@ -23,7 +32,7 @@ export const BottomSheetProvider = ({ children }) => {
         setIsOpen(false);
     };
 
-    const renderBackdrop = (props) => (
+    const renderBackdrop = (props: any) => (
         <BottomSheetBackdrop
             {...props}
             onPress={Keyboard.dismiss}
@@ -37,7 +46,7 @@ export const BottomSheetProvider = ({ children }) => {
             {children}
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={snapPoints} // Usa los snap points que se manejan aquí
+                snapPoints={snapPoints}
                 enablePanDownToClose={true}
                 onClose={closeBottomSheet}
                 backdropComponent={renderBackdrop}
@@ -67,4 +76,10 @@ export const BottomSheetProvider = ({ children }) => {
     );
 };
 
-export const useBottomSheet = () => useContext(BottomSheetContext);
+export const useBottomSheet = (): BottomSheetContextProps => {
+    const context = useContext(BottomSheetContext);
+    if (!context) {
+        throw new Error('useBottomSheet must be used within a BottomSheetProvider');
+    }
+    return context;
+};

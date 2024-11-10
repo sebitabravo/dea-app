@@ -1,14 +1,19 @@
 import { useFetchData } from '@/data/hooks/useFetchData';
 import { getGetDeaPoints } from '@/data/services/deaPointsServices';
 import { DeaPoints } from '@/domain/interfaces/DeaPoints';
-import { useNavigation } from '@react-navigation/native';
+import { useBottomSheet } from '@/presentation/context/BottomSheetContext';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import * as React from 'react';
-import { Alert, Button, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
+import { InfoBottomSheet } from './bottomSheets/InfoBottomSheet';
 import { DeaPoint } from './components/DeaPoint';
 
 export function MapScreen() {
+    const { openBottomSheet } = useBottomSheet();
+
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = React.useState(false);
     const [origin, setOrigin] = React.useState({ latitude: -38.7359, longitude: -72.5908 });
@@ -23,11 +28,19 @@ export function MapScreen() {
         longitudeDelta: 0.005,
     };
 
-    const { data: deaPointsData, loading } = useFetchData(getGetDeaPoints);
+    const { data: deaPointsData, loading, refetch } = useFetchData(getGetDeaPoints);
 
     React.useEffect(() => {
         requestLocationPermission();
     }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            refetch(); 
+            return () => {
+            };
+        }, [])
+    );
 
     // Solicitar permisos de ubicación y obtener la posición del usuario
     const requestLocationPermission = async () => {
@@ -57,11 +70,12 @@ export function MapScreen() {
 
     // Maneja el evento de presionar un marcador
     const handlePressMarker = (point: DeaPoints) => {
+        openBottomSheet(<InfoBottomSheet point={point} origin={origin}  />, ['30%']);
         setSelectedPoint({
             latitude: point.latitude,
             longitude: point.longitude
         });
-        setModalVisible(true);
+        // setModalVisible(true);
     };
 
     // Navegación dentro de la aplicación
@@ -122,33 +136,18 @@ export function MapScreen() {
                 /> */}
             </MapView>
 
-            <TouchableOpacity style={s.createPointButton} onPress={() => navigation.navigate('CreatePoint')}>
+            {/* <TouchableOpacity style={s.createPointButton} onPress={() => navigation.navigate('CreatePoint')}>
                 <Text>Mapa</Text>
-            </TouchableOpacity>
-
-            {/* <TouchableOpacity style={s.centerButton} onPress={centerMapOnUser}>
-                <Ionicons name="locate" size={24} color="white" />
             </TouchableOpacity> */}
 
-            <TouchableOpacity style={s.goButton} onPress={handleNavigate}>
-                <Text style={s.goButtonText}>Iniciar</Text>
+            <TouchableOpacity style={s.centerButton} onPress={centerMapOnUser}>
+                <Ionicons name="locate" size={24} color="white" />
             </TouchableOpacity>
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={s.modalContainer}>
-                    <View style={s.modalView}>
-                        <Text>Elige una opción</Text>
-                        <Button title="IR" onPress={handleNavigate} />
-                        <Button title="Ir con Waze" onPress={handleNavigateWithWaze} />
-                        <Button title="Cancelar" onPress={() => setModalVisible(false)} />
-                    </View>
-                </View>
-            </Modal>
+            <TouchableOpacity style={s.goButton} onPress={() => navigation.navigate('CreatePoint')}>
+                <Text style={s.goButtonText}>Crear punto</Text>
+            </TouchableOpacity>
+
         </View>
     );
 }
