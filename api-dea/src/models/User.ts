@@ -1,3 +1,7 @@
+export enum ROLES {
+    ADMIN = 'admin',
+    USER = 'user',
+}
 
 export interface User {
     id?: number;

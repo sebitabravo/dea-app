@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 
 // Routes
+import authRoutes from './routes/auth.routes';
 import deaPointsRoutes from './routes/deaPoints.routes';
 import userRoutes from './routes/users.routes';
 
@@ -29,6 +30,7 @@ export class App {
         // this.app.use(IndexRoutes);
         this.app.use(userRoutes);
         this.app.use(deaPointsRoutes);
+        this.app.use(authRoutes);
     }
 
     async listen() {

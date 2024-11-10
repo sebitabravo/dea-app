@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { connect } from "../db";
-import { User } from "../interface/User.js";
+import { User } from "../models/User.js";
 
 const table = 'users'
 

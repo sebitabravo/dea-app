@@ -2,8 +2,12 @@ import { Router } from "express";
 import * as deaPointsController from '../controllers/deaPoints.controller';
 
 const router = Router();
-const table = 'dea_points'
+const route = 'dea-points';
 
-router.get(`/${table}`, deaPointsController.getDeaPoints)
+// Obtenemos todos los puntos DEA
+router.get(`/${route}`, deaPointsController.getDeaPoints)
+
+// Creamos un nuevo punto DEA
+router.post(`/${route}`, deaPointsController.createDeaPoint)
 
 export default router;
