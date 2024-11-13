@@ -1,6 +1,6 @@
 import { useFetchData } from '@/data/hooks/useFetchData';
 import { getGetDeaPoints } from '@/data/services/deaPointsServices';
-import { DeaPoints } from '@/domain/interfaces/DeaPoints';
+import { DeaPoints } from '@/domain/models/DeaPoints';
 import { useBottomSheet } from '@/presentation/context/BottomSheetContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';

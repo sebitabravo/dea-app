@@ -64,9 +64,10 @@ export function CreateDeaPointStack() {
 
     return (
         <PrimaryLayout>
-            <GoBackStack />
-
-            <Text style={s.headerText}>Crear punto de DEA</Text>
+            <GoBackStack
+                title='Crear punto DEA'
+                titleClassName='text-center font-bold text-[24px]'
+            />
 
             <View style={s.contentContainer}>
 

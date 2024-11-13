@@ -1,10 +1,14 @@
 
+import { ButtonUI } from '@/componentsUI/ButtonUI';
+import { useLogout } from '@/domain/useCases/auth/hooks/useLogout';
 import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
 
 export function ProfileScreen() {
+
+    const logout = useLogout();
     const { navigate } = useNavigation();
 
     const image: string = 'https://img.freepik.com/free-photo/front-view-man-posing-outdoors_23-2151038654.jpg?t=st=1724008996~exp=1724012596~hmac=b2c9895fe3c78239801f8b06b16e2e13ed4eb8f4f13b89c0d93eb8c8d68f2bc8&w=1060'
@@ -113,6 +117,12 @@ export function ProfileScreen() {
 
 
             </ScrollView>
+
+            <ButtonUI
+                onPress={logout}
+            >
+                <Text>Salir</Text>
+            </ButtonUI>
 
 
 

@@ -9,6 +9,7 @@ export type AuthStackParamList = {
 export type AppStackParamList = {
   Main: undefined;
   CreatePoint: undefined;
+  CreatePost: undefined;
 };
 
 declare global {

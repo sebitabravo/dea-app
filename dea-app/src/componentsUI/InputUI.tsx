@@ -11,6 +11,18 @@ import Animated, {
 // Icons
 import CloseIcon from '@/app/assets/icons/MingcuteCloseLine.svg';
 
+type InputUIProps = {
+    label: string;
+    labelPlacement?: 'inside' | 'outside';
+    placeholder?: string | undefined;
+    variant?: 'flat' | 'bordered' | 'faded';
+    radius?: 'full' | 'lg' | 'md' | 'sm' | 'none';
+    value: string;
+    onChangeText: (text: string) => void;
+    secureText?: boolean;
+    keyboardType?: 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad';
+};
+
 export function InputUI({
     label,
     labelPlacement = 'outside',
@@ -21,7 +33,7 @@ export function InputUI({
     onChangeText,
     secureText = false,
     keyboardType = 'default',
-}) {
+}: InputUIProps) {
 
 
     const { colorScheme } = useColorScheme();
@@ -63,14 +75,15 @@ export function InputUI({
 
     return (
         <View className='w-[90%] py-2 relative'>
-            <Animated.Text
-                className={`text-[16px] font-bold text-black dark:text-white z-10 pb-1
-                    `}
-                style={animatedLabelStyle}
-                pointerEvents="none"
-            >
-                {label}
-            </Animated.Text>
+
+            <View className='z-10' pointerEvents="none">
+                <Animated.Text
+                    className="text-[16px] font-bold text-black dark:text-white pb-1"
+                    style={animatedLabelStyle}
+                >
+                    {label}
+                </Animated.Text>
+            </View>
 
             {
                 value &&
@@ -95,7 +108,7 @@ export function InputUI({
                 ${labelPlacement === 'inside' && 'pb-[1px]'}
 
                     `}
-                placeholder={placeholder ? placeholder : null}
+                placeholder={placeholder ?? undefined}
                 value={value}
                 onChangeText={onChangeText}
                 onFocus={handleFocus}

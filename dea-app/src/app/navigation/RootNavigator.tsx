@@ -3,7 +3,7 @@ import { setUserData } from '@/domain/features/user/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthStack } from './AuthStack';
 import { MyStack } from './MyStack';
@@ -61,7 +61,3 @@ export function RootNavigator() {
         </NavigationContainer>
     )
 }
-
-const s = StyleSheet.create({
-
-})
