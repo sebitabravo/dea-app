@@ -7,7 +7,7 @@ const table = 'posts';
 export const getPosts: RequestHandler = async (_: Request, res: Response) => {
     try {
         const pool = await connect();
-        const [result] = await pool.query(`SELECT * FROM ${table} ORDER BY id DESC`);
+        const [result] = await pool.query(`SELECT * FROM posts_with_user ORDER BY post_id DESC`);
         res.json(result);
     } catch (error) {
         console.error(error);

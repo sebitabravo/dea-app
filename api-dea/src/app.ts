@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 
@@ -20,15 +21,15 @@ export class App {
 
     settigns() {
         this.app.set('port', this.port || process.env.PORT || 3000);
+        dotenv.config();
     }
 
     middlewares() {
         this.app.use(morgan('dev'));
         this.app.use(express.json());
     }
-
+    
     routes() {
-        // this.app.use(IndexRoutes);
         this.app.use(userRoutes);
         this.app.use(deaPointsRoutes);
         this.app.use(authRoutes);

@@ -5,9 +5,9 @@ const router = Router();
 const route = 'dea-points';
 
 // Obtenemos todos los puntos DEA
-router.get(`/${route}`, deaPointsController.getDeaPoints)
+router.get(`/${route}`, deaPointsController.getDeaPoints);
 
 // Creamos un nuevo punto DEA
-router.post(`/${route}`, deaPointsController.createDeaPoint)
+router.post(`/${route}`, deaPointsController.createDeaPoint);
 
 export default router;

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { connect } from "../db";
 import { DeaPoints } from "../models/DeaPoints";
 
-const table = 'dea_points'
+const table = 'dea_points';
 
 export const getDeaPoints = async (_: Request, res: Response) => {
     try {
