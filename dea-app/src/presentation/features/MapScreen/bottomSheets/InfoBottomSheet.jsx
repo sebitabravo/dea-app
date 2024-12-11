@@ -1,4 +1,4 @@
-import { ButtonUI } from '@/componentsUI/ButtonUI';
+import { ButtonUI2 } from '@/componentsUI/Button2';
 import * as React from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
@@ -35,27 +35,26 @@ export function InfoBottomSheet({ point, origin }) {
 
     return (
         <View
-            className='flex items-center mt-5 space-y-2'
+            className='flex items-center mt-5'
         >
 
-            <Text className='font-semibold text-[18px]'>{point.title}</Text>
+            <View className='flex space-y-1 items-center'>
+                <Text className='font-semibold text-[20px]'>{point.title}</Text>
 
-            <Text className='font-semibold text-[14px]'>{point.description}</Text>
+                <Text className='font-semibold text-[16px]'>{point.description}</Text>
 
 
-            {distance !== null && (
-                <Text>Distancia: {distance} km</Text>
-            )}
-
-            <View className='mt-5'>
-            <ButtonUI
-                onPress={handleNavigateWithWaze}
-                className='bg-blue-500 py-3 px-4 text-white'
-            >
-                <Text>Ir con Waze</Text>
-
-            </ButtonUI>
+                {distance !== null && (
+                    <Text className='text-[14px]'>Distancia: {distance} km</Text>
+                )}
             </View>
+
+            <ButtonUI2
+                className='bg-myBlack3 py-4 px-10 text-white mt-4'
+                onPress={handleNavigateWithWaze}
+            >
+                Ir con Waze
+            </ButtonUI2>
 
         </View>
     );

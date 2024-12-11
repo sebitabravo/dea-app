@@ -1,13 +1,15 @@
 
 import 'dotenv/config';
-export default{
+export default {
   "expo": {
+    "userInterfaceStyle": "automatic",
     "name": "dea-app",
     "slug": "dea-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

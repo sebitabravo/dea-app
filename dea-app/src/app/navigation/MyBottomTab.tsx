@@ -1,7 +1,7 @@
 import { TabBar } from '@/presentation/components/TabBar';
 import { MapScreen } from '@/presentation/features/MapScreen/MapScreen';
 import { PostsScreen } from '@/presentation/features/PostsScreen/PostsScreen';
-import { ProfileScreen } from '@/presentation/features/ProfileScreen/ProfileScreen';
+import { SettingsScreen } from '@/presentation/features/SettingsScreen/SettingsScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -24,7 +24,7 @@ export function MyBottomTab() {
                 >
                 <MyTab.Screen name="Map" component={MapScreen} />
                 <MyTab.Screen name="Posts" component={PostsScreen} />
-                <MyTab.Screen name="Profile" component={ProfileScreen} />
+                <MyTab.Screen name="Settings" component={SettingsScreen} />
             </MyTab.Navigator>
         </View>
     )

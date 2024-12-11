@@ -13,17 +13,17 @@ export function GoBackStack({ title, titleClassName }: GoBackStackProps) {
     const { goBack } = useNavigation()
 
     return (
-        <View className='flex-row items-center px-4 py-4'>
+        <View className={`flex-row items-center px-4 py-4 ${title  || 'w-screen'}`}>
 
             <TouchableOpacity
-                className='justify-center items-center bg-myOrange rounded-full h-12 w-12 overflow-hidden z-10'
+                className='justify-center items-center bg-myBlack3 rounded-full h-12 w-12 overflow-hidden z-10'
                 onPress={() => {
                     goBack()
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
                 }}
             >
 
-                <ArrowIcon width={26} height={26} color={'black'} />
+                <ArrowIcon width={26} height={26} color={'white'} />
             </TouchableOpacity>
 
             <View className='absolute left-0 right-0 z-0'>

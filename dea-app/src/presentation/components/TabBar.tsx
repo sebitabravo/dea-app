@@ -13,7 +13,9 @@ import UserIcon from '@/app/assets/icons/MingcuteUser2Line.svg'
 
 export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
     return (
-        <View style={s.tabBar}>
+        <View
+            className='bg-white dark:bg-gray-800'
+            style={s.tabBar}>
             {
                 state.routes.map((route, index) => {
                     const focused = state.index === index

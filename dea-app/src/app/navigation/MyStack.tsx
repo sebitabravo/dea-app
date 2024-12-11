@@ -4,8 +4,8 @@ import { StyleSheet } from 'react-native';
 
 // Screens and Stacks
 import { BottomSheetProvider } from '@/presentation/context/BottomSheetContext';
-import { CreateDeaPointStack } from '@/presentation/features/MapScreen/stacks/CreateDeaPointStack';
-import { CreatePostStack } from '@/presentation/features/PostsScreen/stacks/CreatePostStack';
+import { CreateDeaPointScreen } from '@/presentation/features/MapScreen/screens/CreateDeaPointScreen';
+import { CreatePostScreen } from '@/presentation/features/PostsScreen/screens/CreatePostScreen';
 import { MyBottomTab } from './MyBottomTab';
 import { AppStackParamList } from './navigation';
 
@@ -23,14 +23,14 @@ export function MyStack() {
                     <Stack.Screen name="Main" component={MyBottomTab} />
                     <Stack.Screen
                         name="CreatePoint"
-                        component={CreateDeaPointStack}
+                        component={CreateDeaPointScreen}
                         options={{
                             presentation: 'fullScreenModal',
                         }}
                     />
                     <Stack.Screen
                         name="CreatePost"
-                        component={CreatePostStack}
+                        component={CreatePostScreen}
                         options={{
                             presentation: 'fullScreenModal',
                         }}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, StyleSheet, ViewProps } from 'react-native';
+import { SafeAreaView, ViewProps } from 'react-native';
 
 interface PrimaryLayoutProps extends ViewProps {
     children: React.ReactNode;
@@ -7,14 +7,10 @@ interface PrimaryLayoutProps extends ViewProps {
 
 export function PrimaryLayout({ children, ...props }: PrimaryLayoutProps) {
     return (
-        <SafeAreaView style={[s.container, props.style]} {...props}>
+        <SafeAreaView
+            className='flex-1'
+            {...props}>
             {children}
         </SafeAreaView>
     );
 }
-
-const s = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});

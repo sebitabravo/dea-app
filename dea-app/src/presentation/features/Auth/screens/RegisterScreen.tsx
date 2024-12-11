@@ -114,10 +114,10 @@ export function RegisterScreen() {
                     />
                     <View className='w-screen px-10'>
                         <ButtonUI
-                            className='h-12 mt-6 bg-myYellow'
+                            className='h-12 mt-6 bg-primaryGreen'
                             onPress={handleRegister}
                         >
-                            <Text className='text-black'>Siguiente</Text>
+                            <Text className='text-white'>Siguiente</Text>
                         </ButtonUI>
                     </View>
                     <View className='mt-5 flex flex-row space-x-2 items-center'>

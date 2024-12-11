@@ -1,9 +1,10 @@
 import { BASE_URL } from '@/data/constants/api_url';
 import { CreatePostDto } from '@/domain/models/post/CreateProductDto';
+import { PostListDto } from '@/domain/models/post/PostListDto';
 
 const route = 'posts';
 
-export const apiGetPosts = async () => {
+export const apiGetPosts = async (): Promise<PostListDto[] | undefined> => {
     try {
         const res = await fetch(`${BASE_URL}/${route}`);
         if (!res.ok) {

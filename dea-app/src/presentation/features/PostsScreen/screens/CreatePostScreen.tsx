@@ -1,15 +1,35 @@
+import { AppStackParamList } from '@/app/navigation/navigation'
+import { ButtonUI2 } from '@/componentsUI/Button2'
 import { InputUI } from '@/componentsUI/InputUI'
+import { apiCreatePost } from '@/data/services/postsServices'
 import { GoBackStack } from '@/presentation/components/GoBackStack'
 import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { useSelector } from 'react-redux'
 
-export function CreatePostStack() {
+type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
+
+
+export function CreatePostScreen() {
+    const navigation = useNavigation<AppScreenNavigationProp>();
+    const user = useSelector((state: any) => state.user)
 
     const [inputFields, setInputFields] = React.useState({
+        user_id: user.id,
         title: '',
         content: '',
     });
+
+    const handleSavePost = async () => {
+        const result = await apiCreatePost(inputFields);
+
+        if (result) {
+            navigation.goBack();
+        }
+    };
 
 
     const handleInputChange = (value: string, field: string) => {
@@ -24,7 +44,7 @@ export function CreatePostStack() {
         >
 
             <GoBackStack
-                title='Create Post'
+                title='Crear Publicacion'
             />
 
             <View className='flex justify-center items-center'>
@@ -42,6 +62,14 @@ export function CreatePostStack() {
                 />
 
             </View>
+
+
+                <ButtonUI2
+                    className='bg-myBlack3 py-4 mt-8 w-[60%] self-center '
+                    onPress={handleSavePost}
+                >
+                    Subir Publicacion!
+                </ButtonUI2>
 
         </PrimaryLayout>
     )

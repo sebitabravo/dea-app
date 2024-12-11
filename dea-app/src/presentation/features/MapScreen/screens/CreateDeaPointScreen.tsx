@@ -1,17 +1,21 @@
-import { ButtonUI } from '@/componentsUI/ButtonUI';
+import { AppStackParamList } from '@/app/navigation/navigation';
+import { ButtonUI2 } from '@/componentsUI/Button2';
 import { InputUI } from '@/componentsUI/InputUI';
 import { apiCreateDeaPoint } from '@/data/services/deaPointsServices';
 import { GoBackStack } from '@/presentation/components/GoBackStack';
 import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import uuid from 'react-native-uuid';
 
-export function CreateDeaPointStack() {
+type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-    const navigation = useNavigation();
+export function CreateDeaPointScreen() {
+
+    const navigation = useNavigation<AppScreenNavigationProp>();
 
     const [inputFields, setInputFields] = React.useState({
         title: '',
@@ -56,7 +60,7 @@ export function CreateDeaPointStack() {
             longitude: inputFields.longitude,
         });
 
-        navigation.navigate('Map');
+        navigation.navigate('Main');
 
 
 
@@ -110,12 +114,12 @@ export function CreateDeaPointStack() {
 
 
 
-                <ButtonUI
-                    className='h-12 my-2 mt-6 bg-myOrange'
+                <ButtonUI2
+                className='bg-primaryGreen py-4 px-10 text-white mt-4'
                     onPress={handleSubmit}
                 >
-                    <Text className='text-black'>Crear punto de DEA</Text>
-                </ButtonUI>
+                    Crear Punto DEA
+                </ButtonUI2>
             </View>
         </PrimaryLayout>
     );

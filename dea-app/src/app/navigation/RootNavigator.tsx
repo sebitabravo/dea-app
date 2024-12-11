@@ -22,42 +22,46 @@ export function RootNavigator() {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        const getValue = async () => {
+        (async () => {
             try {
-                // Recuperar el token y los datos del usuario
                 const token = await AsyncStorage.getItem('@token');
                 const userData = await AsyncStorage.getItem('@user');
 
                 if (token) {
                     dispatch(restoreToken(token));
                     if (userData) {
-                        dispatch(setUserData(JSON.parse(userData))); // Restaurar datos del usuario
+                        try {
+                            const parsedUserData = JSON.parse(userData);
+                            dispatch(setUserData(parsedUserData));
+                        } catch (error) {
+                            console.log('Error al analizar los datos del usuario:', error);
+                        }
                     }
                 } else {
-                    dispatch(restoreToken(null)); // No hay token
+                    dispatch(restoreToken(null));
                 }
             } catch (error) {
-                console.log(error);
-                dispatch(restoreToken(null)); // En caso de error, restaurar sin token
+                console.log('Error al recuperar los datos:', error);
+                dispatch(restoreToken(null));
             }
-        };
-
-        getValue();
+        })();
     }, [dispatch]);
+
+    const renderContent = () => {
+        if (isLoading) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>Cargando...</Text>
+                </View>
+            );
+        }
+
+        return userToken ? <MyStack /> : <AuthStack />;
+    };
 
     return (
         <NavigationContainer>
-            {
-                isLoading ? (
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text>Cargando...</Text>
-                    </View>
-                ) : userToken ? (
-                    <MyStack />
-                ) : (
-                    <AuthStack />
-                )
-            }
+            {renderContent()}
         </NavigationContainer>
-    )
+    );
 }

@@ -69,12 +69,14 @@ export function LoginScreen() {
                 <View className='w-full flex items-center'>
 
                     <InputUI
+                        placeholder=''
                         label={'Email'}
                         value={inputFields.email}
                         onChangeText={(value) => handleInputChange(value, 'email')}
                     />
 
                     <InputUI
+                        placeholder=''
                         label={'Contraseña'}
                         secureText={true}
                         value={inputFields.password}
@@ -86,10 +88,10 @@ export function LoginScreen() {
                     <View className='w-screen px-10
                 '>
                         <ButtonUI
-                            className='h-12 mt-6 bg-myYellow'
+                            className='h-12 mt-6 bg-primaryGreen'
                             onPress={handleLogin}
                         >
-                            <Text className='text-black'>Iniciar sesión</Text>
+                            <Text className='text-white'>Iniciar sesión</Text>
                         </ButtonUI>
                     </View>
 

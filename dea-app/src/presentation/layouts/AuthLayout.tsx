@@ -12,8 +12,8 @@ export function AuthLayout({ children, ...props }: PrimaryLayoutProps) {
     const { colorScheme } = useColorScheme();
 
     const colors = colorScheme === 'dark' ?
-        ["#0D0D0D", "#47126b"] :
-        ["#FFFFFF", "#47126b"];
+        ["#FFFFFF", "#FFFFFF"] :
+        ["#FFFFFF", "#FFFFFF"];
 
     return (
         <LinearGradient

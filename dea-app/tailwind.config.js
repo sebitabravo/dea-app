@@ -29,6 +29,9 @@ module.exports = {
       myPink: '#FF8AB5',
       myGreen: '#00B454',
 
+      primaryGreen: '#028137',
+      primaryRed: '#D32F2F',
+
       primaryGray: '#111112',
 
       transparent: 'transparent',

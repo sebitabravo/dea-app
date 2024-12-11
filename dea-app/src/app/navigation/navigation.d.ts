@@ -10,6 +10,7 @@ export type AppStackParamList = {
   Main: undefined;
   CreatePoint: undefined;
   CreatePost: undefined;
+  Settings: undefined;
 };
 
 declare global {

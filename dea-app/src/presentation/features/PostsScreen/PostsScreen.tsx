@@ -4,7 +4,7 @@ import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { PostListContainer } from './components/PostListContainer';
 
 
 type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -16,18 +16,15 @@ export function PostsScreen() {
 
     return (
         <PrimaryLayout>
-            <Text>PostsScreen</Text>
+
+            <PostListContainer />
 
             <ButtonUI2
+                className='absolute bottom-4 self-center bg-myBlack2 py-2 mx-4'
                 onPress={() => navigation.navigate('CreatePost')}
-            
             >
-                Create Post
+                Crear Post
             </ButtonUI2>
         </PrimaryLayout>
     )
 }
-
-const s = StyleSheet.create({
-    
-})

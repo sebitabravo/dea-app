@@ -6,14 +6,15 @@ import 'react-native-get-random-values';
 import { Provider } from 'react-redux';
 
 export default function App() {
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
 
-
         <RootNavigator />
 
         <StatusBar style="auto" />
+
       </Provider>
 
 
