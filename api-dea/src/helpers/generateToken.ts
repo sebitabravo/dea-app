@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
+import { SECRET_KEY } from '../config';
 
 export const generateToken = (email: string) => {
     const token = jwt.sign({
         id: email,
         rol: 1
-    }, process.env.SECRET_KEY  as string, {
+    }, SECRET_KEY, {
         expiresIn: '24h'
     });
 
@@ -17,7 +18,7 @@ export const generateToken = (email: string) => {
 
 export const verifyToken = (token: string) => {
     try {
-        return jwt.verify(token, process.env.SECRET_KEY as string);
+        return jwt.verify(token, SECRET_KEY);
     } catch (error) {
         return null;
     }

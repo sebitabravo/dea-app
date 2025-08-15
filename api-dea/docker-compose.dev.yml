@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: .
+      target: development
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=devpassword123
+      - DB_NAME=dea
+      - DB_PORT=3306
+      - SECRET_KEY=dev-secret-key-not-for-production
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=devpassword123
+      - MYSQL_DATABASE=dea
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      - ./db/db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_dev_data:

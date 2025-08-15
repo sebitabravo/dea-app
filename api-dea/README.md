@@ -1,150 +1,250 @@
-# Documentación de la API
+# DEA API
 
-## Introducción
-Esta documentación detalla la estructura y funcionalidad de los archivos del proyecto "api-dea". Se describe el propósito de cada archivo y su relación dentro del sistema.
+API REST para la aplicación DEA construida con Node.js, Express, TypeScript y MySQL.
 
----
+## 🚀 Características
 
-## Estructura del Proyecto
+- **Autenticación JWT** - Sistema seguro de login/registro
+- **Base de datos MySQL** - Gestión de usuarios, posts y puntos DEA
+- **TypeScript** - Código tipado y más mantenible
+- **Docker** - Containerización para fácil despliegue
+- **Seguridad** - Helmet, CORS, Rate limiting
+- **Manejo de errores** - Middleware centralizado de errores
 
-### 1. **Base de Datos**
+## 📋 Requisitos previos
 
-#### **db.sql**
-- Contiene el script para crear y configurar la base de datos.
-- Incluye las tablas necesarias para almacenar información de usuarios, publicaciones y puntos DEA.
+- Node.js 18+
+- MySQL 8.0+
+- Docker (opcional, para contenedores)
 
----
+## 🛠️ Instalación
 
-### 2. **Directorio `src/`**
-Este directorio contiene el código fuente principal de la API.
+1. **Clonar el repositorio**
+```bash
+git clone <repository-url>
+cd api-dea
+```
 
-#### **`controllers/`**
-Contiene los controladores que manejan la lógica de negocio de los endpoints:
+2. **Instalar dependencias**
+```bash
+npm install
+```
 
-1. **auth.controller.ts**
-   - Gestiona las operaciones relacionadas con la autenticación.
-   - Endpoints:
-     - `POST /auth/login`: Inicia sesión.
-     - `POST /auth/register`: Registra un nuevo usuario.
+3. **Configurar variables de entorno**
+```bash
+cp .env.example .env
+# Editar .env con tus configuraciones
+```
 
-2. **deaPoints.controller.ts**
-   - Gestiona las operaciones relacionadas con los puntos DEA.
-   - Endpoints:
-     - `GET /deapoints`: Lista todos los puntos DEA.
-     - `POST /deapoints`: Crea un nuevo punto DEA.
+4. **Configurar la base de datos**
+```bash
+# Crear la base de datos ejecutando db/db.sql en tu MySQL
+mysql -u root -p < db/db.sql
+```
 
-3. **index.controller.ts**
-   - Proporciona un endpoint principal para verificar el estado del servidor.
-   - Endpoint:
-     - `GET /`: Devuelve un mensaje indicando que el servidor está funcionando.
+## 🚀 Uso
 
-4. **posts.controller.ts**
-   - Gestiona las operaciones relacionadas con las publicaciones.
-   - Endpoints:
-     - `GET /posts`: Lista todas las publicaciones.
-     - `POST /posts`: Crea una nueva publicación.
-     - `DELETE /posts/:id`: Elimina una publicación.
+### Desarrollo Local
 
-5. **users.controller.ts**
-   - Gestiona las operaciones relacionadas con los usuarios.
-   - Endpoints:
-     - `GET /users`: Lista todos los usuarios.
-     - `GET /users/:id`: Obtiene un usuario por su ID.
+#### Opción 1: Sin Docker
+```bash
+# Instalar dependencias
+npm install
 
-#### **`helpers/`**
+# Ejecutar en modo desarrollo (usa .env.development)
+npm run dev
 
-1. **generateToken.ts**
-   - Proporciona funciones para generar tokens JWT utilizados en la autenticación.
+# O construir y ejecutar para desarrollo
+npm run build:dev
+npm run start:dev
+```
 
-#### **`models/`**
-Define las estructuras de datos utilizadas en la aplicación:
+#### Opción 2: Con Docker
+```bash
+# Desarrollo con Docker Compose
+docker-compose -f docker-compose.dev.yml up -d
 
-1. **BaseModel.d.ts**
-   - Define las interfaces base para los modelos.
+# Ver logs
+docker-compose -f docker-compose.dev.yml logs -f api
+```
 
-2. **DeaPoints.ts**
-   - Modelo para los puntos DEA.
-   - Propiedades:
-     - `id`: Identificador del punto.
-     - `location`: Coordenadas geográficas.
-     - `description`: Descripción del punto.
+### Producción
 
-3. **Posts.ts**
-   - Modelo para las publicaciones.
-   - Propiedades:
-     - `id`: Identificador de la publicación.
-     - `title`: Título.
-     - `content`: Contenido.
-     - `userId`: ID del usuario creador.
+#### Opción 1: Local
+```bash
+# Construir para producción (usa .env.production)
+npm run build:prod
 
-4. **User.ts**
-   - Modelo para los usuarios.
-   - Propiedades:
-     - `id`: Identificador del usuario.
-     - `name`: Nombre.
-     - `email`: Correo electrónico.
-     - `password`: Contraseña (hash).
+# Ejecutar en producción
+npm start
+```
 
-#### **`routes/`**
-Define las rutas que conectan los endpoints con sus respectivos controladores:
+#### Opción 2: Docker (Recomendado para Dockploy)
+```bash
+# Producción con Docker Compose
+NODE_ENV=production docker-compose -f docker-compose.prod.yml up -d
 
-1. **auth.routes.ts**
-   - Rutas para autenticación.
-     - `POST /auth/login`
-     - `POST /auth/register`
+# O usar el compose general
+docker-compose up -d
+```
 
-2. **deaPoints.routes.ts**
-   - Rutas para los puntos DEA.
-     - `GET /deapoints`
-     - `POST /deapoints`
+#### Opción 3: Solo contenedor API
+```bash
+# Build para producción
+docker build --target production -t dea-api:prod .
 
-3. **index.routes.ts**
-   - Ruta principal.
-     - `GET /`
+# Ejecutar contenedor
+docker run -p 3000:3000 --env-file .env.production dea-api:prod
+```
 
-4. **posts.routes.ts**
-   - Rutas para las publicaciones.
-     - `GET /posts`
-     - `POST /posts`
-     - `DELETE /posts/:id`
+## 📡 API Endpoints
 
-5. **users.routes.ts**
-   - Rutas para los usuarios.
-     - `GET /users`
-     - `GET /users/:id`
+Todos los endpoints están bajo el prefijo `/api/v1/`
 
-#### Archivos Principales
+### Autenticación
+- `POST /api/v1/auth/login` - Iniciar sesión
+- `POST /api/v1/auth/register` - Registrar usuario
 
-1. **app.ts**
-   - Configura el servidor Express y registra los middlewares y rutas.
+### Usuarios  
+- `GET /api/v1/users` - Obtener todos los usuarios
+- `GET /api/v1/users/:id` - Obtener usuario por ID
+- `PUT /api/v1/users/:id` - Actualizar usuario
+- `DELETE /api/v1/users/:id` - Eliminar usuario
 
-2. **config.ts**
-   - Contiene configuraciones generales como las claves secretas y las credenciales de la base de datos.
+### Posts
+- `GET /api/v1/posts` - Obtener todos los posts
+- `POST /api/v1/posts` - Crear nuevo post
+- `GET /api/v1/posts/:id` - Obtener post por ID
+- `PUT /api/v1/posts/:id` - Actualizar post
+- `DELETE /api/v1/posts/:id` - Eliminar post
 
-3. **db.ts**
-   - Configura la conexión con la base de datos PostgreSQL utilizando un cliente como `pg` o `sequelize`.
+### Puntos DEA
+- `GET /api/v1/dea-points` - Obtener todos los puntos
+- `POST /api/v1/dea-points` - Crear nuevo punto
+- `GET /api/v1/dea-points/:id` - Obtener punto por ID
+- `PUT /api/v1/dea-points/:id` - Actualizar punto
+- `DELETE /api/v1/dea-points/:id` - Eliminar punto
 
-4. **index.ts**
-   - Punto de entrada de la aplicación. Inicia el servidor y conecta la base de datos.
+### Sistema
+- `GET /health` - Health check
 
----
+## 🗂️ Estructura del proyecto
 
-## Uso
+```
+src/
+├── controllers/     # Controladores de rutas
+├── routes/         # Definición de rutas
+├── models/         # Modelos de datos
+├── helpers/        # Utilidades y helpers
+├── middleware/     # Middleware personalizado
+├── config.ts       # Configuración de variables
+├── db.ts          # Conexión a base de datos
+├── app.ts         # Configuración de Express
+└── index.ts       # Punto de entrada
+```
 
-### Inicializar el Servidor
-1. Configurar las variables de entorno en un archivo `.env`.
-2. Ejecutar el siguiente comando:
-   ```bash
-   npm run dev
-   ```
-3. El servidor estará disponible en `http://localhost:3000`.
+## 🔒 Seguridad
 
-### Consumir Endpoints
-Utiliza herramientas como Postman o cURL para interactuar con los endpoints descritos en las rutas.
+- **Helmet** - Headers de seguridad HTTP
+- **CORS** - Control de acceso entre orígenes
+- **Rate Limiting** - Límite de peticiones por IP
+- **JWT** - Autenticación por tokens
+- **bcrypt** - Encriptación de contraseñas
 
----
+## 🌍 Gestión de Entornos
 
-## Notas Finales
+La API maneja automáticamente diferentes entornos basándose en la variable `NODE_ENV`:
 
-Esta estructura está diseñada para ser modular y escalable. Cada archivo tiene una responsabilidad clara, facilitando la comprensión y el mantenimiento del código.
+### Archivos de Configuración
+
+- **`.env.development`** - Configuración para desarrollo local
+- **`.env.production`** - Configuración para producción
+- **`.env.example`** - Plantilla de ejemplo
+
+### Scripts NPM por Entorno
+
+```bash
+# Desarrollo
+npm run dev                 # Desarrollo con hot-reload
+npm run build:dev          # Build para desarrollo
+npm run start:dev          # Ejecutar build de desarrollo
+
+# Producción  
+npm run build:prod         # Build para producción
+npm start                  # Ejecutar en producción
+```
+
+### Variables de Entorno por Defecto
+
+#### Desarrollo (`.env.development`)
+- Base de datos local (localhost:3306)
+- Secret key de desarrollo
+- CORS permisivo para desarrollo
+- Logging detallado
+
+#### Producción (`.env.production`)
+- Configuración de seguridad estricta
+- Variables deben ser configuradas manualmente
+- Validación automática de variables críticas
+
+## 🚀 Despliegue en Dockploy
+
+### Preparación
+
+1. **Configurar variables de entorno en Dockploy:**
+```env
+NODE_ENV=production
+DB_HOST=tu_host_mysql_hostinger
+DB_USER=tu_usuario_mysql
+DB_PASSWORD=tu_password_mysql
+DB_NAME=dea
+DB_PORT=3306
+SECRET_KEY=tu_clave_super_secreta_de_64_caracteres
+ALLOWED_ORIGINS=https://tudominio.com
+```
+
+2. **Configuración de Dockploy:**
+   - Repositorio: Tu repo de GitHub
+   - Puerto: 3000
+   - Build Command: `npm run build:prod`
+   - Start Command: `npm start`
+
+3. **Base de datos MySQL en Hostinger:**
+```bash
+# Ejecutar el script de inicialización
+mysql -h tu_host -u tu_usuario -p tu_base_de_datos < db/db.sql
+```
+
+## 🐛 Desarrollo
+
+Para contribuir al proyecto:
+
+1. Fork del repositorio
+2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit de cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir Pull Request
+
+## 📝 Variables de entorno requeridas
+
+```env
+PORT=3000
+NODE_ENV=production
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=tu_password
+DB_NAME=dea
+DB_PORT=3306
+SECRET_KEY=tu_clave_super_secreta
+ALLOWED_ORIGINS=https://tudominio.com
+```
+
+## 🤝 Soporte
+
+Si tienes problemas o preguntas, por favor:
+
+1. Revisa la documentación
+2. Verifica las variables de entorno
+3. Comprueba los logs de la aplicación
+4. Abre un issue en el repositorio
 
