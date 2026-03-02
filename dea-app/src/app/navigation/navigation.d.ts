@@ -1,6 +1,5 @@
-
 export type AuthStackParamList = {
-  Auth: undefined
+  Auth: undefined;
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
@@ -15,6 +14,6 @@ export type AppStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends AppStackParamList {}
   }
 }

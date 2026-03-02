@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 
 export function ButtonUI({
@@ -126,5 +126,3 @@ export function ButtonUI({
         </Animated.View>
     );
 }
-
-const s = StyleSheet.create({});

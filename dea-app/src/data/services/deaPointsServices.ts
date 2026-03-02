@@ -12,7 +12,7 @@ export const getGetDeaPoints = async () => {
     }
 }
 
-export const apiCreateDeaPoint = async (data: Object) => {
+export const apiCreateDeaPoint = async (data: object) => {
     try {
         const res = await fetch(`${BASE_URL}/dea-points`, {
             method: 'POST',

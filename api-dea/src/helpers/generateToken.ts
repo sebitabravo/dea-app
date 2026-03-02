@@ -19,7 +19,7 @@ export const generateToken = (email: string) => {
 export const verifyToken = (token: string) => {
     try {
         return jwt.verify(token, SECRET_KEY);
-    } catch (error) {
+    } catch (_error) {
         return null;
     }
 }

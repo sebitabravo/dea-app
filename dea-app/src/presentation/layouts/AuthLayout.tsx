@@ -7,13 +7,10 @@ interface PrimaryLayoutProps extends ViewProps {
     children: React.ReactNode;
 }
 
-
 export function AuthLayout({ children, ...props }: PrimaryLayoutProps) {
-    const { colorScheme } = useColorScheme();
+    useColorScheme();
 
-    const colors = colorScheme === 'dark' ?
-        ["#FFFFFF", "#FFFFFF"] :
-        ["#FFFFFF", "#FFFFFF"];
+    const colors: [string, string] = ['#FFFFFF', '#FFFFFF'];
 
     return (
         <LinearGradient
@@ -22,13 +19,11 @@ export function AuthLayout({ children, ...props }: PrimaryLayoutProps) {
             end={{ x: 11.3, y: 1 }}
             style={{ flex: 1 }}
         >
-            <View style={s.container}
-                {...props}
-            >
+            <View style={s.container} {...props}>
                 {children}
             </View>
         </LinearGradient>
-    )
+    );
 }
 
 const s = StyleSheet.create({
@@ -37,4 +32,4 @@ const s = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
     },
-})
+});

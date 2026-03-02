@@ -4,150 +4,140 @@ import { InputUI } from '@/componentsUI/InputUI';
 import { apiCreateDeaPoint } from '@/data/services/deaPointsServices';
 import { GoBackStack } from '@/presentation/components/GoBackStack';
 import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout';
-import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import uuid from 'react-native-uuid';
 
 type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
+type InputFields = {
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+};
+
+type PlaceDetails = {
+  geometry?: {
+    location?: {
+      lat?: number;
+      lng?: number;
+    };
+  };
+};
+
 export function CreateDeaPointScreen() {
+  const navigation = useNavigation<AppScreenNavigationProp>();
 
-    const navigation = useNavigation<AppScreenNavigationProp>();
+  const [inputFields, setInputFields] = React.useState<InputFields>({
+    title: '',
+    description: '',
+    latitude: 0,
+    longitude: 0,
+  });
 
-    const [inputFields, setInputFields] = React.useState({
-        title: '',
-        description: '',
-        latitude: 0,
-        longitude: 0,
+  const handlePlaceSelect = (_data: unknown, details: PlaceDetails | null = null) => {
+    const lat = details?.geometry?.location?.lat;
+    const lng = details?.geometry?.location?.lng;
+
+    if (typeof lat !== 'number' || typeof lng !== 'number') return;
+
+    setInputFields((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+    }));
+  };
+
+  const handleInputChange = (value: string, field: 'title' | 'description') => {
+    setInputFields((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!inputFields.latitude || !inputFields.longitude) {
+      Alert.alert('Error', 'Por favor ingresa una dirección válida y selecciona una sugerencia.');
+      return;
+    }
+
+    await apiCreateDeaPoint({
+      user_id: 1,
+      title: inputFields.title,
+      description: inputFields.description,
+      latitude: inputFields.latitude,
+      longitude: inputFields.longitude,
     });
 
-    const handlePlaceSelect = (data: any, details: any) => {
-        setInputFields({
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng,
-        });
-    };
+    navigation.navigate('Main');
+  };
 
-    const handleInputChange = (value: any, field: string) => {
-        setInputFields((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
+  return (
+    <PrimaryLayout>
+      <GoBackStack title="Crear punto DEA" titleClassName="text-center font-bold text-[24px]" />
 
-    const handleSubmit = async () => {
-        if (!inputFields.latitude || !inputFields.longitude) {
-            Alert.alert('Error', 'Por favor ingresa una dirección válida y selecciona una sugerencia.');
-            return;
-        }
+      <View style={s.contentContainer}>
+        <Text className="text-start font-semibold text-[16px]">Direccion</Text>
 
-        const newDEAId = uuid.v4(); // Genera un UUID único
+        <View className="mt-2" style={s.googlePlacesContainer}>
+          <GooglePlacesAutocomplete
+            placeholder="Ingresa una dirección"
+            fetchDetails
+            onPress={handlePlaceSelect}
+            query={{
+              key: 'AIzaSyDnjMYiWwRaoIGegAq5IAWFvJsgAAidwEw',
+              language: 'es',
+              types: 'address',
+            }}
+            styles={{
+              textInput: s.textInput,
+              listView: s.listView,
+            }}
+          />
+        </View>
 
-        // Alert.alert(
-        //     'Punto de DEA creado',
-        //     `ID: ${newDEAId}\nDirección: ${inputFields.title}\nLatitud: ${inputFields.latitude}\nLongitud: ${inputFields.longitude}`
-        // );
+        <InputUI
+          label="Nombre"
+          placeholder="Ingrese un nombre"
+          value={inputFields.title}
+          onChangeText={(value: string) => handleInputChange(value, 'title')}
+        />
 
-        // crear punto de DEA
-        await apiCreateDeaPoint({
-            user_id: 1,
-            title: inputFields.title,
-            description: inputFields.description,
-            latitude: inputFields.latitude,
-            longitude: inputFields.longitude,
-        });
+        <InputUI
+          label="Descripcion"
+          placeholder="Ingrese una Descripcion"
+          value={inputFields.description}
+          onChangeText={(value: string) => handleInputChange(value, 'description')}
+        />
 
-        navigation.navigate('Main');
-
-
-
-    };
-
-    return (
-        <PrimaryLayout>
-            <GoBackStack
-                title='Crear punto DEA'
-                titleClassName='text-center font-bold text-[24px]'
-            />
-
-            <View style={s.contentContainer}>
-
-                {/* Contenedor fijo para GooglePlacesAutocomplete */}
-
-                <Text className='text-start font-semibold text-[16px]'>Direccion</Text>
-
-                <View
-                   className='mt-2'
-                    style={s.googlePlacesContainer}>
-                    <GooglePlacesAutocomplete
-                        placeholder="Ingresa una dirección"
-                        fetchDetails={true}
-                        onPress={handlePlaceSelect}
-                        query={{
-                            key: 'AIzaSyDnjMYiWwRaoIGegAq5IAWFvJsgAAidwEw',
-                            language: 'es', // Idioma de las sugerencias
-                            types: 'address', // Limita los resultados a direcciones
-                        }}
-                        styles={{
-                            textInput: s.textInput,
-                            listView: s.listView,
-                        }}
-                    />
-                </View>
-
-                <InputUI 
-                    label={'Nombre '}
-                    placeholder={'Ingrese un nombre'}
-                    value={inputFields.title}
-                    onChangeText={(value: any) => handleInputChange(value, 'title')}
-                />
-
-                <InputUI
-                    label={'Descripcion '}
-                    placeholder={'Ingrese una Descripcion'}
-                    value={inputFields.description}
-                    onChangeText={(value: any) => handleInputChange(value, 'description')}
-                />
-
-
-
-                <ButtonUI2
-                className='bg-primaryGreen py-4 px-10 text-white mt-4'
-                    onPress={handleSubmit}
-                >
-                    Crear Punto DEA
-                </ButtonUI2>
-            </View>
-        </PrimaryLayout>
-    );
+        <ButtonUI2 className="bg-primaryGreen py-4 px-10 text-white mt-4" onPress={handleSubmit}>
+          Crear Punto DEA
+        </ButtonUI2>
+      </View>
+    </PrimaryLayout>
+  );
 }
 
 const s = StyleSheet.create({
-    headerText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    contentContainer: {
-        flex: 1,
-        alignItems: 'center',
-        paddingHorizontal: 16,
-    },
-    googlePlacesContainer: {
-        width: '100%',
-        height: 200, // Altura fija para evitar conflictos de desplazamiento
-        marginBottom: 20,
-    },
-    textInput: {
-        height: 60,
-        borderColor: '#ccc',
-        paddingLeft: 10,
-    },
-    listView: {
-        backgroundColor: '#fff',
-    },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  googlePlacesContainer: {
+    width: '100%',
+    height: 200,
+    marginBottom: 20,
+  },
+  textInput: {
+    height: 60,
+    borderColor: '#ccc',
+    paddingLeft: 10,
+  },
+  listView: {
+    backgroundColor: '#fff',
+  },
 });

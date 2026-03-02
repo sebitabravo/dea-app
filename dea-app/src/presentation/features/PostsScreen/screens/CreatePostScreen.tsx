@@ -1,4 +1,5 @@
 import { AppStackParamList } from '@/app/navigation/navigation'
+import { CreatePostDto } from '@/domain/models/post/CreateProductDto'
 import { ButtonUI2 } from '@/componentsUI/Button2'
 import { InputUI } from '@/componentsUI/InputUI'
 import { apiCreatePost } from '@/data/services/postsServices'
@@ -7,7 +8,7 @@ import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { useSelector } from 'react-redux'
 
 type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -17,10 +18,11 @@ export function CreatePostScreen() {
     const navigation = useNavigation<AppScreenNavigationProp>();
     const user = useSelector((state: any) => state.user)
 
-    const [inputFields, setInputFields] = React.useState({
+    const [inputFields, setInputFields] = React.useState<CreatePostDto>({
         user_id: user.id,
         title: '',
         content: '',
+        image: '',
     });
 
     const handleSavePost = async () => {
@@ -74,7 +76,3 @@ export function CreatePostScreen() {
         </PrimaryLayout>
     )
 }
-
-const s = StyleSheet.create({
-
-})
