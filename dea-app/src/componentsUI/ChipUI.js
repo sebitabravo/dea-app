@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 export function ChipUI({
     color = 'default',
@@ -43,7 +43,3 @@ export function ChipUI({
         </View>
     )
 }
-
-const s = StyleSheet.create({
-
-})

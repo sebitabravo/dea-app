@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 
 // Screens and Stacks
 import { BottomSheetProvider } from '@/presentation/context/BottomSheetContext';
@@ -40,7 +39,3 @@ export function MyStack() {
         </>
     )
 }
-
-const s = StyleSheet.create({
-
-})

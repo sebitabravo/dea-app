@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 export function OptionCard({ children, onPress, ...props }) {
 
@@ -17,7 +17,3 @@ export function OptionCard({ children, onPress, ...props }) {
         </Pressable>
     )
 }
-
-const s = StyleSheet.create({
-
-})

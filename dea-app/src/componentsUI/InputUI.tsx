@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -121,13 +121,3 @@ export function InputUI({
         </View>
     );
 }
-
-const s = StyleSheet.create({
-    input: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
-    },
-});

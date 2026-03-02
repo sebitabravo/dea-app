@@ -20,8 +20,6 @@ export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
                 state.routes.map((route, index) => {
                     const focused = state.index === index
                     const isActions = route.name === 'Actions'
-                    const itemColor = focused ? 'red' : 'blue'
-
                     const onPress = () => {
                         const event = navigation.emit({
                             type: 'tabPress',

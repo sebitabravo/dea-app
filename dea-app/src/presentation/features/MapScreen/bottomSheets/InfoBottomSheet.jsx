@@ -1,6 +1,6 @@
 import { ButtonUI2 } from '@/componentsUI/Button2';
 import * as React from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
 export function InfoBottomSheet({ point, origin }) {
     const [distance, setDistance] = React.useState(null);
@@ -59,13 +59,3 @@ export function InfoBottomSheet({ point, origin }) {
         </View>
     );
 }
-
-const s = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 10,
-        gap: 10,
-    },
-});

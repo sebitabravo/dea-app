@@ -2,7 +2,7 @@ import { BASE_URL } from "../constants/api_url";
 
 const route = 'auth'
 
-export const apiLogin = async (data: Object) => {
+export const apiLogin = async (data: object) => {
     try {
         const res = await fetch(`${BASE_URL}/${route}/login`, {
             method: 'POST',
@@ -20,7 +20,7 @@ export const apiLogin = async (data: Object) => {
     }
 }
 
-export const apiRegister = async (data: Object) => {
+export const apiRegister = async (data: object) => {
     try {
         const res = await fetch(`${BASE_URL}/${route}/register`, {
             method: 'POST',
