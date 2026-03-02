@@ -3,6 +3,6 @@ module.exports = {
   extends: ['expo', 'eslint:recommended'],
   ignorePatterns: ['node_modules/', '.expo/', 'dist/'],
   rules: {
-    'no-console': 'warn',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
 };

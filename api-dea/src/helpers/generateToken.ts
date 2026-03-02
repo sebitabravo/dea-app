@@ -19,7 +19,8 @@ export const generateToken = (email: string) => {
 export const verifyToken = (token: string) => {
     try {
         return jwt.verify(token, SECRET_KEY);
-    } catch (_error) {
+    } catch (error) {
+        console.error('JWT verification failed:', error);
         return null;
     }
 }
