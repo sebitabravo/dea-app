@@ -3,12 +3,14 @@
   "compilerOptions": {
     "jsx": "react-native", 
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  // "include": [
-  //   "src",
-  //   "images.d.ts"
-  // ]
+  "exclude": [
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
