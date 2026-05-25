@@ -34,28 +34,23 @@ export function InputUI({
     secureText = false,
     keyboardType = 'default',
 }: InputUIProps) {
-
-
     const { colorScheme } = useColorScheme();
 
     const labelPosition = useSharedValue(placeholder ? 1 : 0);
 
     const animatedLabelStyle = useAnimatedStyle(() => {
-
         switch (labelPlacement) {
             case 'outside':
                 return {
                     top: withTiming(labelPosition.value === 1 ? 0 : 40, { duration: 240 }),
                     left: withTiming(labelPosition.value === 1 ? 18 : 24, { duration: 240 }),
-                }
+                };
             case 'inside':
                 return {
                     top: withTiming(labelPosition.value === 1 ? 27 : 40, { duration: 240 }),
                     left: withTiming(labelPosition.value === 1 ? 16 : 16, { duration: 240 }),
-                }
-
+                };
         }
-
     });
 
     const handleFocus = () => {
@@ -71,12 +66,11 @@ export function InputUI({
     const clearText = () => {
         onChangeText('');
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+    };
 
     return (
-        <View className='w-[90%] py-2 relative'>
-
-            <View className='z-10' pointerEvents="none">
+        <View className="w-[90%] py-2 relative">
+            <View className="z-10" pointerEvents="none">
                 <Animated.Text
                     className="text-[16px] font-bold text-black dark:text-white pb-1"
                     style={animatedLabelStyle}
@@ -85,29 +79,29 @@ export function InputUI({
                 </Animated.Text>
             </View>
 
-            {
-                value &&
+            {value ? (
                 <Pressable
-                    className='absolute right-4 top-11 z-10 bg-default/20 rounded-full w-6 h-6 flex justify-center items-center'
+                    className="absolute right-4 top-11 z-10 bg-default/20 rounded-full w-8 h-8 flex justify-center items-center"
                     onPress={clearText}
+                    accessibilityLabel="Limpiar texto"
+                    accessibilityRole="button"
                 >
                     <CloseIcon height={16} width={16} fill={colorScheme === 'dark' ? 'white' : 'black'} />
                 </Pressable>
-            }
+            ) : null}
 
             <TextInput
-                className={`bg-white dark:bg-myGray h-14 p-4 dark:text-white
-                ${radius === 'full' && 'rounded-full'}
-                ${radius === 'lg' && 'rounded-2xl'}
-                ${radius === 'md' && 'rounded-xl'}
-                ${radius === 'sm' && 'rounded-md'}
-                ${radius === 'none' && 'rounded-none'}
-                ${variant === 'flat' && 'bg-white dark:bg-myGray'}
-                ${variant === 'bordered' && 'border-2 border-gray-300 bg-transparent'}
-                ${variant === 'faded' && 'border-2 border-gray-300 bg-white'}
-                ${labelPlacement === 'inside' && 'pb-[1px]'}
-
-                    `}
+                className={`bg-white dark:bg-myGray h-14 p-4 dark:text-white min-h-[44px]
+                    ${radius === 'full' && 'rounded-full'}
+                    ${radius === 'lg' && 'rounded-2xl'}
+                    ${radius === 'md' && 'rounded-xl'}
+                    ${radius === 'sm' && 'rounded-md'}
+                    ${radius === 'none' && 'rounded-none'}
+                    ${variant === 'flat' && 'bg-white dark:bg-myGray'}
+                    ${variant === 'bordered' && 'border-2 border-gray-300 bg-transparent'}
+                    ${variant === 'faded' && 'border-2 border-gray-300 bg-white'}
+                    ${labelPlacement === 'inside' && 'pb-[1px]'}
+                `}
                 placeholder={placeholder ?? undefined}
                 value={value}
                 onChangeText={onChangeText}
@@ -115,9 +109,7 @@ export function InputUI({
                 onBlur={handleBlur}
                 secureTextEntry={secureText}
                 keyboardType={keyboardType}
-            >
-
-            </TextInput>
+            />
         </View>
     );
 }

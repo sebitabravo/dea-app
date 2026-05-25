@@ -1,2 +1,41 @@
+# Dependencias
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.expo/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS
 .DS_Store
-~$ntenido.docx
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# IA / agentes
+.claude/
+CLAUDE.md
+.antigravitycli/
+.aider*
+.cursor/
+.continue/
+.windsurf/
+*.ai.*
+
+# Docs output
+docs/output/
+
+# Vim
+*.swp
+*.swo
+*~

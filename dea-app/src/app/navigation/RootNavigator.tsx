@@ -5,26 +5,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '@/app/store/store';
+import { getAuthToken } from '@/data/services/secureTokenStorage';
 import { AuthStack } from './AuthStack';
 import { MyStack } from './MyStack';
 
-interface AuthState {
-    userToken: string | null;
-    isLoading: boolean;
-}
-
-interface RootState {
-    auth: AuthState;
-}
-
 export function RootNavigator() {
-    const { userToken, isLoading } = useSelector((state: RootState) => state.auth);
+    const { token, isLoading } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
 
     React.useEffect(() => {
         (async () => {
             try {
-                const token = await AsyncStorage.getItem('@token');
+                const token = await getAuthToken();
                 const userData = await AsyncStorage.getItem('@user');
 
                 if (token) {
@@ -34,14 +27,14 @@ export function RootNavigator() {
                             const parsedUserData = JSON.parse(userData);
                             dispatch(setUserData(parsedUserData));
                         } catch (error) {
-                            console.log('Error al analizar los datos del usuario:', error);
+                            console.error('Error al analizar los datos del usuario:', error);
                         }
                     }
                 } else {
                     dispatch(restoreToken(null));
                 }
             } catch (error) {
-                console.log('Error al recuperar los datos:', error);
+                console.error('Error al recuperar los datos:', error);
                 dispatch(restoreToken(null));
             }
         })();
@@ -56,7 +49,7 @@ export function RootNavigator() {
             );
         }
 
-        return userToken ? <MyStack /> : <AuthStack />;
+        return token ? <MyStack /> : <AuthStack />;
     };
 
     return (

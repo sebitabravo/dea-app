@@ -9,4 +9,5 @@ export interface User extends BaseModel {
     username: string;
     email: string;
     password: string;
+    rol: ROLES;
 }

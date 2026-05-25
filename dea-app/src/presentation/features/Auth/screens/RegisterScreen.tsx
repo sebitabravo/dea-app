@@ -1,29 +1,22 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AuthStackParamList } from '@/app/navigation/navigation';
 import { ButtonUI } from '@/componentsUI/ButtonUI';
 import { InputUI } from '@/componentsUI/InputUI';
-import { apiRegister } from '@/data/services/authServices';
-import { signIn } from '@/domain/features/auth/auth';
+import { registerUser } from '@/domain/features/auth/auth';
 import { setUserData } from '@/domain/features/user/user';
 import { GoBackStack } from '@/presentation/components/GoBackStack';
 import { PrimaryLayout } from '@/presentation/layouts/PrimaryLayout';
+import type { AppDispatch } from '@/app/store/store';
 
 type ScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
-type RegisterResponse = {
-    token: string;
-    user: unknown;
-    message?: string;
-};
-
 export function RegisterScreen() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const { navigate } = useNavigation<ScreenNavigationProp>();
 
     const [inputFields, setInputFields] = React.useState({
@@ -33,45 +26,47 @@ export function RegisterScreen() {
         repeatPassword: '',
     });
 
+    const [errorMessage, setErrorMessage] = React.useState('');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     const handleRegister = async () => {
+        setErrorMessage('');
+
         if (!inputFields.email || !inputFields.username || !inputFields.password || !inputFields.repeatPassword) {
-            Alert.alert('Error', 'Por favor, complete todos los campos.');
+            setErrorMessage('Por favor, complete todos los campos.');
             return;
         }
 
         if (inputFields.password !== inputFields.repeatPassword) {
-            Alert.alert('Error', 'Las contraseñas no coinciden');
+            setErrorMessage('Las contrasenas no coinciden');
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(inputFields.email)) {
-            Alert.alert('Error', 'Por favor, ingrese un correo electrónico válido');
+            setErrorMessage('Por favor, ingrese un correo electronico valido');
             return;
         }
 
         if (inputFields.password.length < 6) {
-            Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres');
+            setErrorMessage('La contrasena debe tener al menos 6 caracteres');
             return;
         }
 
+        setIsSubmitting(true);
         try {
-            const res = (await apiRegister(inputFields)) as RegisterResponse;
+            const result = await dispatch(registerUser({
+                username: inputFields.username,
+                email: inputFields.email,
+                password: inputFields.password,
+            })).unwrap();
 
-            if (res.message === 'Email is already registered') {
-                Alert.alert('Error', 'El email ya está registrado');
-                return;
-            }
-
-            const { token, user } = res;
-
-            await AsyncStorage.setItem('@token', token);
-            await AsyncStorage.setItem('@user', JSON.stringify(user));
-
-            dispatch(signIn(token));
-            dispatch(setUserData(user));
-        } catch {
-            Alert.alert('Error', 'Ocurrió un error al registrar el usuario. Inténtelo de nuevo.');
+            dispatch(setUserData(result.user));
+        } catch (error: unknown) {
+            const message = typeof error === 'string' ? error : 'Ocurrio un error al registrar el usuario. Intentelo de nuevo.';
+            setErrorMessage(message);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -86,25 +81,47 @@ export function RegisterScreen() {
         <PrimaryLayout>
             <View className="flex justify-center items-center">
                 <GoBackStack />
-                <Text className="dark:text-white font-bold text-2xl -mt-8">Regístrate</Text>
+                <Text className="dark:text-white font-bold text-2xl -mt-8">Registrate</Text>
                 <View className="w-full flex items-center">
                     <InputUI label="Email" value={inputFields.email} onChangeText={(value) => handleInputChange(value, 'email')} />
                     <InputUI label="Usuario" value={inputFields.username} onChangeText={(value) => handleInputChange(value, 'username')} />
-                    <InputUI label="Contraseña" secureText value={inputFields.password} onChangeText={(value) => handleInputChange(value, 'password')} />
+                    <InputUI label="Contrasena" secureText value={inputFields.password} onChangeText={(value) => handleInputChange(value, 'password')} />
                     <InputUI
-                        label="Repite tu contraseña"
+                        label="Repite tu contrasena"
                         secureText
                         value={inputFields.repeatPassword}
                         onChangeText={(value) => handleInputChange(value, 'repeatPassword')}
                     />
+
+                    {errorMessage ? (
+                        <Text
+                            className="mt-2 text-center"
+                            style={{ color: 'red' }}
+                            accessibilityRole="alert"
+                        >
+                            {errorMessage}
+                        </Text>
+                    ) : null}
+
                     <View className="w-screen px-10">
-                        <ButtonUI className="h-12 mt-6 bg-primaryGreen" onPress={handleRegister}>
-                            <Text className="text-white">Siguiente</Text>
+                        <ButtonUI
+                            className="h-12 mt-6 bg-primaryGreen"
+                            onPress={handleRegister}
+                            isDisabled={isSubmitting}
+                            accessibilityLabel="Registrarse"
+                        >
+                            <Text className="text-white">
+                                {isSubmitting ? 'Registrando...' : 'Siguiente'}
+                            </Text>
                         </ButtonUI>
                     </View>
                     <View className="mt-5 flex flex-row space-x-2 items-center">
-                        <Text className="dark:text-white">¿Ya tienes cuenta?</Text>
-                        <Pressable onPress={() => navigate('Login')}>
+                        <Text className="dark:text-white">Ya tienes cuenta?</Text>
+                        <Pressable
+                            onPress={() => navigate('Login')}
+                            accessibilityRole="button"
+                            accessibilityLabel="Ir a inicio de sesion"
+                        >
                             <Text className="font-bold text-lg text-myGray6 dark:text-background-light">Entrar</Text>
                         </Pressable>
                     </View>

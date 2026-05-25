@@ -6,7 +6,7 @@ import { RefreshControl, ScrollView, Text } from 'react-native';
 import { PostItem } from './PostItem';
 
 export function PostListContainer() {
-    const { data: posts, loading, refetch } = useFetchData(apiGetPosts);
+    const { data: posts, loading, error, refetch } = useFetchData(apiGetPosts);
     const [refreshing, setRefreshing] = React.useState(false);
 
     useFocusEffect(
@@ -18,14 +18,20 @@ export function PostListContainer() {
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
-        await refetch();  // Refresca los datos
+        await refetch();
         setRefreshing(false);
     }, [refetch]);
 
-    console.log('posts', posts);
-
     if (loading) {
         return <Text>Loading...</Text>;
+    }
+
+    if (error) {
+        return (
+            <Text className="text-red-500 text-center mt-4" accessibilityRole="alert">
+                Error: {error}
+            </Text>
+        );
     }
 
     if (!posts || posts.length === 0) {
@@ -40,7 +46,7 @@ export function PostListContainer() {
                     refreshing={refreshing}
                     onRefresh={onRefresh}
                     colors={['#ff6347']}
-                    title='Loading...'
+                    title="Loading..."
                 />
             }
         >

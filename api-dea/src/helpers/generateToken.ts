@@ -1,10 +1,17 @@
 import jwt from 'jsonwebtoken';
 import { SECRET_KEY } from '../config';
 
-export const generateToken = (email: string) => {
+interface TokenUser {
+    id: number;
+    email: string;
+    rol: string;
+}
+
+export const generateToken = (user: TokenUser) => {
     const token = jwt.sign({
-        id: email,
-        rol: 1
+        id: user.id,
+        email: user.email,
+        rol: user.rol,
     }, SECRET_KEY, {
         expiresIn: '24h'
     });
@@ -23,8 +30,13 @@ export const verifyToken = (token: string) => {
         console.error('JWT verification failed:', error);
         return null;
     }
-}
+};
 
-export const decodeToken = (token: string) => {
+/**
+ * ATENCION: jwt.decode() NO verifica la firma del token.
+ * Solo decodifica el payload sin validar autenticidad.
+ * NO usar para autorizacion. Usar verifyToken() en su lugar.
+ */
+export const decodeWithoutVerification = (token: string) => {
     return jwt.decode(token);
-}
+};

@@ -5,4 +5,4 @@ async function main() {
     await app.listen();
 }
 
-main();
+void main();

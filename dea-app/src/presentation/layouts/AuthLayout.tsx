@@ -1,5 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
 
@@ -8,21 +6,10 @@ interface PrimaryLayoutProps extends ViewProps {
 }
 
 export function AuthLayout({ children, ...props }: PrimaryLayoutProps) {
-    useColorScheme();
-
-    const colors: [string, string] = ['#FFFFFF', '#FFFFFF'];
-
     return (
-        <LinearGradient
-            colors={colors}
-            start={{ x: 0.1, y: 0 }}
-            end={{ x: 11.3, y: 1 }}
-            style={{ flex: 1 }}
-        >
-            <View style={s.container} {...props}>
-                {children}
-            </View>
-        </LinearGradient>
+        <View style={s.container} {...props}>
+            {children}
+        </View>
     );
 }
 

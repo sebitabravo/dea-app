@@ -14,8 +14,22 @@ import {
 } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-// Icons
 import DownIcon from '@/app/assets/icons/MingcuteDownLine.svg';
+
+interface SelectItem {
+    id: string | number;
+    name: string;
+}
+
+interface SelectUIProps {
+    data: SelectItem[];
+    onChange: (item: SelectItem) => void;
+    color?: 'default' | 'primary' | 'secondary';
+    radius?: 'full' | 'lg' | 'md' | 'sm' | 'none';
+    label: string;
+    size?: 'sm' | 'md' | 'lg';
+    haptics?: 'none' | 'soft' | 'light' | 'medium' | 'heavy' | 'rigid';
+}
 
 export function SelectUI({
     data,
@@ -25,43 +39,43 @@ export function SelectUI({
     label,
     size,
     haptics = 'none',
-}) {
+}: SelectUIProps) {
     const { colorScheme } = useColorScheme();
     const [expanded, setExpanded] = useState(false);
     const [value, setValue] = useState("");
     const [top, setTop] = useState(0);
-    const buttonRef = useRef(null);
+    const buttonRef = useRef<View>(null);
 
     const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
 
-    const onSelect = useCallback((item) => {
+    const onSelect = useCallback((item: SelectItem) => {
         onChange(item);
         setValue(item.name);
         setExpanded(false);
         switch (haptics) {
             case 'soft':
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
-                break
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+                break;
             case 'light':
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-                break
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                break;
             case 'medium':
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-                break
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                break;
             case 'heavy':
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
-                break
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                break;
             case 'rigid':
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)
-                break
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+                break;
             default:
-                break
+                break;
         }
-    }, [onChange]);
+    }, [onChange, haptics]);
 
     const measureView = () => {
         if (buttonRef.current) {
-            buttonRef.current.measure((fx, fy, width, height, px, py) => {
+            buttonRef.current.measure((_fx, _fy, _width, height, _px, py) => {
                 const topOffset = py;
                 const heightOfComponent = height;
                 const finalValue =
@@ -71,12 +85,11 @@ export function SelectUI({
         }
     };
 
-    // Animación de rotación para el DownIcon
     const rotation = useSharedValue(expanded ? 180 : 0);
 
     React.useEffect(() => {
         rotation.value = withTiming(expanded ? 180 : 0, { duration: 200 });
-    }, [expanded]);
+    }, [expanded, rotation]);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -84,14 +97,13 @@ export function SelectUI({
         };
     });
 
-    // Animación del modal (opacidad y traslación)
     const modalOpacity = useSharedValue(expanded ? 1 : 0);
-    const modalTranslateY = useSharedValue(expanded ? 0 : - 50);
+    const modalTranslateY = useSharedValue(expanded ? 0 : -50);
 
     React.useEffect(() => {
         modalOpacity.value = withTiming(expanded ? 1 : 0, { duration: 100 });
         modalTranslateY.value = withTiming(expanded ? 0 : -10, { duration: 200 });
-    }, [expanded]);
+    }, [expanded, modalOpacity, modalTranslateY]);
 
     const modalAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -104,25 +116,30 @@ export function SelectUI({
         <View
             ref={buttonRef}
             onLayout={measureView}
-            className='flex relative py-2'>
+            className="flex relative py-2"
+        >
             <Pressable
-                className=
-                {`h-[60px] flex-row w-[90%] justify-between items-center px-5 
-                ${color === 'default' && colorScheme === 'light' ? 'bg-myGray6' : 'bg-myLila'}   
-                ${radius === 'full' && 'rounded-full'}
-                ${radius === 'lg' && 'rounded-2xl'}
-                ${radius === 'md' && 'rounded-xl'}
-                ${radius === 'sm' && 'rounded-md'}
-                ${radius === 'none' && 'rounded-none'}
+                className={`
+                    h-[60px] flex-row w-[90%] justify-between items-center px-5 min-h-[44px]
+                    ${color === 'default' && colorScheme === 'light' ? 'bg-myGray6' : 'bg-myLila'}
+                    ${radius === 'full' && 'rounded-full'}
+                    ${radius === 'lg' && 'rounded-2xl'}
+                    ${radius === 'md' && 'rounded-xl'}
+                    ${radius === 'sm' && 'rounded-md'}
+                    ${radius === 'none' && 'rounded-none'}
                 `}
                 onPress={toggleExpanded}
+                accessibilityRole="button"
+                accessibilityLabel={label}
             >
                 <Text
                     className={`
                         ${color === 'default' && colorScheme === 'light' ? 'text-white' : 'text-black'}
                         text-semibold text-[15px]
-                            `}
-                >{value || label}</Text>
+                    `}
+                >
+                    {value || label}
+                </Text>
                 <Animated.View style={[animatedStyle]}>
                     <DownIcon
                         height={20}
@@ -138,18 +155,19 @@ export function SelectUI({
                         <View style={styles.backdrop}>
                             <Animated.View
                                 className={`
-                                     ${color === 'default' && colorScheme === 'light' ? 'bg-myGray6' : 'bg-myLila'}   
+                                    ${color === 'default' && colorScheme === 'light' ? 'bg-myGray6' : 'bg-myLila'}
                                     ${radius === 'full' && 'rounded-3xl'}
                                     ${radius === 'lg' && 'rounded-2xl'}
                                     ${radius === 'md' && 'rounded-xl'}
                                     ${radius === 'sm' && 'rounded-md'}
                                     ${radius === 'none' && 'rounded-none'}
-                                        `}
-                                style={[styles.options, { top }, modalAnimatedStyle]}>
+                                `}
+                                style={[styles.options, { top }, modalAnimatedStyle]}
+                            >
                                 <FlatList
-                                    keyExtractor={(item) => item.id}
+                                    keyExtractor={(item: SelectItem) => String(item.id)}
                                     data={data}
-                                    renderItem={({ item }) => (
+                                    renderItem={({ item }: { item: SelectItem }) => (
                                         <TouchableOpacity
                                             activeOpacity={0.8}
                                             style={styles.optionItem}
@@ -157,9 +175,11 @@ export function SelectUI({
                                         >
                                             <Text
                                                 className={`
-                                                 ${color === 'default' && colorScheme === 'light' ? 'text-white text-[16px] px-2' : 'text-black'}   
-                                                    `}
-                                            >{item.name}</Text>
+                                                    ${color === 'default' && colorScheme === 'light' ? 'text-white text-[16px] px-2' : 'text-black'}
+                                                `}
+                                            >
+                                                {item.name}
+                                            </Text>
                                         </TouchableOpacity>
                                     )}
                                     ItemSeparatorComponent={() => (

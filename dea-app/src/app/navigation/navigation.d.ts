@@ -2,18 +2,23 @@ export type AuthStackParamList = {
   Auth: undefined;
   Login: undefined;
   Register: undefined;
-  ForgotPassword: undefined;
 };
 
-export type AppStackParamList = {
-  Main: undefined;
-  CreatePoint: undefined;
+export type MyStackParamList = {
+  Home: undefined;
   CreatePost: undefined;
-  Settings: undefined;
+  CreateDeaPoint: undefined;
+};
+
+export type MyBottomTabParamList = {
+  Map: undefined;
+  Posts: undefined;
+  Profile: undefined;
 };
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends AppStackParamList {}
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- requerido por declaration merging de React Navigation
+    interface RootParamList extends MyStackParamList {}
   }
 }

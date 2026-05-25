@@ -1,4 +1,4 @@
-import { AppStackParamList } from '@/app/navigation/navigation';
+import { MyStackParamList } from '@/app/navigation/navigation';
 import { useFetchData } from '@/data/hooks/useFetchData';
 import { getGetDeaPoints } from '@/data/services/deaPointsServices';
 import { DeaPoints } from '@/domain/models/DeaPoints';
@@ -13,7 +13,7 @@ import MapView, { Marker, Region } from 'react-native-maps';
 import { InfoBottomSheet } from './bottomSheets/InfoBottomSheet';
 import { DeaPoint } from './components/DeaPoint';
 
-type AppScreenNavigationProp = NativeStackNavigationProp<AppStackParamList>;
+type AppScreenNavigationProp = NativeStackNavigationProp<MyStackParamList>;
 
 export function MapScreen() {
     const { openBottomSheet } = useBottomSheet();
@@ -45,7 +45,7 @@ export function MapScreen() {
     const requestLocationPermission = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert('Permisos denegados', 'No se puede acceder a la ubicación.');
+            Alert.alert('Permisos denegados', 'No se puede acceder a la ubicacion.');
             return;
         }
         const location = await Location.getCurrentPositionAsync({});
@@ -77,7 +77,7 @@ export function MapScreen() {
     return (
         <View>
             <MapView ref={mapRef} style={s.map} initialRegion={initialRegion} showsUserLocation followsUserLocation={modeGo}>
-                <Marker coordinate={origin} title="Origen" description="Tu ubicación actual" anchor={{ x: 0.5, y: 0.5 }} />
+                <Marker coordinate={origin} title="Origen" description="Tu ubicacion actual" anchor={{ x: 0.5, y: 0.5 }} />
 
                 {deaPointsData?.map((point: DeaPoints) => (
                     <Marker
@@ -95,11 +95,21 @@ export function MapScreen() {
                 ))}
             </MapView>
 
-            <TouchableOpacity style={s.centerButton} onPress={centerMapOnUser}>
+            <TouchableOpacity
+                style={s.centerButton}
+                onPress={centerMapOnUser}
+                accessibilityLabel="Centrar mapa en mi ubicacion"
+                accessibilityRole="button"
+            >
                 <Ionicons name="locate" size={24} color="white" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={s.goButton} onPress={() => navigation.navigate('CreatePoint')}>
+            <TouchableOpacity
+                style={s.goButton}
+                onPress={() => navigation.navigate('CreateDeaPoint')}
+                accessibilityLabel="Crear punto DEA"
+                accessibilityRole="button"
+            >
                 <Text style={s.goButtonText}>Crear punto</Text>
             </TouchableOpacity>
         </View>
@@ -118,6 +128,10 @@ const s = StyleSheet.create({
         backgroundColor: 'black',
         borderRadius: 50,
         padding: 10,
+        minWidth: 44,
+        minHeight: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     goButton: {
         position: 'absolute',
@@ -128,6 +142,8 @@ const s = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 20,
+        minHeight: 44,
+        justifyContent: 'center',
     },
     goButtonText: {
         color: 'white',

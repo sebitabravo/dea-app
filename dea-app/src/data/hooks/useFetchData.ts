@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-type FetchFunction<T> = (...params: any[]) => Promise<T>;
+type FetchParam = string | number | boolean | null | undefined;
+type FetchFunction<T> = (...params: FetchParam[]) => Promise<T>;
 
 interface UseFetchDataReturn<T> {
     data: T | null;
@@ -11,11 +12,13 @@ interface UseFetchDataReturn<T> {
 
 export const useFetchData = <T,>(
     fetchFunction: FetchFunction<T>,
-    ...params: any[]
+    ...params: FetchParam[]
 ): UseFetchDataReturn<T> => {
     const [data, setData] = React.useState<T | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
+
+    const serializedParams = React.useMemo(() => JSON.stringify(params), [params]);
 
     const fetchData = React.useCallback(async () => {
         setLoading(true);
@@ -23,21 +26,19 @@ export const useFetchData = <T,>(
         try {
             const result = await fetchFunction(...params);
             setData(result);
-        } catch (error: any) {
-            if (error.message === 'Not Found') {
-                setData([] as unknown as T); // Manejar el caso específico de tipo T
-            } else {
-                setError(error.message || 'An unknown error occurred');
-            }
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
-    }, [fetchFunction, ...params]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- params spread no es verificable estáticamente
+    }, [fetchFunction, serializedParams]);
 
     React.useEffect(() => {
         setData(null);
-        fetchData();
-    }, [fetchData, ...params]);
+        void fetchData();
+    }, [fetchData]);
 
     return { data, loading, error, refetch: fetchData };
 };

@@ -12,7 +12,6 @@ module.exports = {
         light2: '#F9F9F9',
         dark: '#02010a',
       },
-      white: '#FFFFFF',
       myYellow: '#F5F378',
       myOrange: '#EC704B',
       myLila: '#DCC1FF',

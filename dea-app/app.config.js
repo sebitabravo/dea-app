@@ -2,7 +2,6 @@
 import 'dotenv/config';
 export default {
   "expo": {
-    "userInterfaceStyle": "automatic",
     "name": "dea-app",
     "slug": "dea-app",
     "version": "1.0.0",
@@ -28,6 +27,12 @@ export default {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
+      // GOOGLE_MAPS_API_KEY se resuelve desde el environment (/.env o variable de entorno).
+      // RIESGO: en Expo Go / React Native, las extra properties se incluyen en el bundle.
+      // La key debe estar restringida en Google Cloud Console por:
+      //   - iOS: bundle ID (com.seudominio.app)
+      //   - Android: SHA-1 fingerprint + package name
+      // Sin estas restricciones, cualquiera puede extraer la key del binario y usarla.
       "GOOGLE_MAPS_API_KEY": process.env.GOOGLE_MAPS_API_KEY
     }
   }

@@ -1,60 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
+import { sendError } from '../utils/response';
+import { IS_PRODUCTION } from '../config';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Express ErrorRequestHandler requiere any
 export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
-    console.error('Error:', err);
+    const safeError = err instanceof Error ? err.message : 'Unknown error';
 
-    // Default error
-    let error = {
-        statusCode: err.statusCode || 500,
-        message: err.message || 'Internal Server Error'
-    };
-
-    // Mongoose bad ObjectId
-    if (err.name === 'CastError') {
-        const message = 'Resource not found';
-        error = { statusCode: 404, message };
+    if (IS_PRODUCTION) {
+        console.error(`Error on ${req.method} ${req.originalUrl}: ${safeError}`);
+    } else {
+        console.error('Error:', err);
     }
 
-    // Mongoose duplicate key
-    if (err.code === 11000) {
-        const message = 'Duplicate field value entered';
-        error = { statusCode: 400, message };
-    }
-
-    // Mongoose validation error
-    if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((val: any) => val.message).join(', ');
-        error = { statusCode: 400, message };
-    }
+    let statusCode = err.statusCode || 500;
+    let message = err.message || 'Internal Server Error';
 
     // MySQL errors
     if (err.code === 'ER_DUP_ENTRY') {
-        error = { statusCode: 409, message: 'Duplicate entry' };
+        statusCode = 409;
+        message = 'Duplicate entry';
     }
 
     if (err.code === 'ER_NO_SUCH_TABLE') {
-        error = { statusCode: 500, message: 'Database table not found' };
+        statusCode = 500;
+        message = 'Database table not found';
     }
 
     // JWT errors
     if (err.name === 'JsonWebTokenError') {
-        error = { statusCode: 401, message: 'Invalid token' };
+        statusCode = 401;
+        message = 'Invalid token';
     }
 
     if (err.name === 'TokenExpiredError') {
-        error = { statusCode: 401, message: 'Token expired' };
+        statusCode = 401;
+        message = 'Token expired';
     }
 
-    res.status(error.statusCode).json({
-        success: false,
-        message: error.message,
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-    });
+    sendError(res, IS_PRODUCTION && statusCode >= 500 ? 'Internal Server Error' : message, statusCode);
 };
 
 export const notFound = (req: Request, res: Response) => {
-    res.status(404).json({
-        success: false,
-        message: `Route ${req.originalUrl} not found`
-    });
+    sendError(res, `Route ${req.originalUrl} not found`, 404);
 };

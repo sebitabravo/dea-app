@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -20,35 +19,35 @@ export class App {
 
     constructor(private port?: number | string) {
         this.app = express();
-        this.settigns();
+        this.settings();
         this.middlewares();
         this.routes();
     }
 
-    settigns() {
+    settings() {
         this.app.set('port', this.port || process.env.PORT || 3000);
-        dotenv.config();
+        this.app.set('trust proxy', 1);
     }
 
     middlewares() {
         // Security middleware
         this.app.use(helmet());
         this.app.use(cors({
-            origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+            origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
             credentials: true
         }));
 
-        // Rate limiting
+        // Rate limiting — global
         const limiter = rateLimit({
-            windowMs: 15 * 60 * 1000, // 15 minutes
-            max: 100, // limit each IP to 100 requests per windowMs
+            windowMs: 15 * 60 * 1000,
+            max: 100,
             message: 'Too many requests from this IP, please try again later.'
         });
         this.app.use(limiter);
 
         // Logging and parsing
-        this.app.use(morgan('combined'));
-        this.app.use(express.json({ limit: '10mb' }));
+        this.app.use(morgan('short'));
+        this.app.use(express.json({ limit: '1mb' }));
         this.app.use(express.urlencoded({ extended: true }));
 
         // Health check endpoint
@@ -62,6 +61,15 @@ export class App {
     }
     
     routes() {
+        // Login rate limiter debe aplicarse ANTES de montar authRoutes
+        // para que express lo evalue antes de que el router maneje la ruta
+        const loginLimiter = rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 5,
+            message: 'Too many login attempts from this IP, please try again later.'
+        });
+        this.app.use('/api/v1/auth/login', loginLimiter);
+
         this.app.use('/api/v1', userRoutes);
         this.app.use('/api/v1', deaPointsRoutes);
         this.app.use('/api/v1', authRoutes);
@@ -70,6 +78,10 @@ export class App {
         // Error handling middleware (must be last)
         this.app.use(notFound);
         this.app.use(errorHandler);
+    }
+
+    getApp(): express.Application {
+        return this.app;
     }
 
     async listen() {

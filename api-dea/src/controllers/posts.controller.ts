@@ -1,39 +1,75 @@
 import { Request, RequestHandler, Response } from "express";
-import { connect } from "../db";
-import { Post } from "../models/Posts";
+import { PostService } from "../services/PostService";
+import { sendSuccess, sendError } from "../utils/response";
+import { parsePagination } from "../utils/pagination";
 
-const table = 'posts';
 
-export const getPosts: RequestHandler = async (_: Request, res: Response) => {
+export const getPosts: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const pool = await connect();
-        const [result] = await pool.query(`SELECT * FROM posts_with_user ORDER BY post_id DESC`);
-        res.json(result);
+        const { limit, offset } = parsePagination(req.query.limit, req.query.offset);
+        const posts = await PostService.getAll(limit, offset);
+        sendSuccess(res, posts);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        sendError(res, 'Internal server error');
     }
 };
 
 export const createPost: RequestHandler = async (req: Request, res: Response) => {
-    const { user_id, title, content }: Post = req.body;
+    const { title, content, image } = req.body;
+    const user_id = req.user?.id;
 
-    if (!user_id || !title || !content) {
-        res.status(400).json({ message: 'Please. Send your user_id, title and content' });
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
+        return;
+    }
+
+    if (!title || !content) {
+        sendError(res, 'Title and content are required', 400);
         return;
     }
 
     try {
-        const pool = await connect();
-        await pool.query(
-            `INSERT INTO ${table} (user_id, title, content) VALUES (?, ?, ?)`,
-            [user_id, title, content]
-        );
-        res.status(201).json({ message: 'Post created successfully' });
-        return;
+        const post = await PostService.create(user_id, title, content, image);
+        sendSuccess(res, post, null, 201);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
+    }
+};
+
+export const updatePost: RequestHandler = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const user_id = req.user?.id;
+
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
         return;
+    }
+
+    try {
+        const post = await PostService.update(Number(id), user_id, req.body);
+        sendSuccess(res, post);
+    } catch (error) {
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
+    }
+};
+
+export const deletePost: RequestHandler = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const user_id = req.user?.id;
+
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
+        return;
+    }
+
+    try {
+        await PostService.delete(Number(id), user_id);
+        sendSuccess(res, { message: 'Post deleted successfully' });
+    } catch (error) {
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
     }
 };

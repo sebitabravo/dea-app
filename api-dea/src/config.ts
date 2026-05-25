@@ -17,7 +17,12 @@ console.log(`📁 Environment file: ${envFile}`);
 // Variables de configuración
 export const ENVIRONMENT = NODE_ENV;
 export const PORT = process.env.PORT || 3000;
-export const SECRET_KEY = process.env.SECRET_KEY || 'default-secret-key-change-in-production';
+const secretKey = process.env.SECRET_KEY;
+if (!secretKey) {
+    console.error('FATAL: SECRET_KEY environment variable is required');
+    process.exit(1);
+}
+export const SECRET_KEY = secretKey;
 
 // Configuración de base de datos
 export const DB_CONFIG = {

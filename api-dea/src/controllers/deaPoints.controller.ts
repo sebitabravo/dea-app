@@ -1,31 +1,76 @@
 import { Request, Response } from "express";
-import { connect } from "../db";
-import { DeaPoints } from "../models/DeaPoints";
+import { DeaPointService } from "../services/DeaPointService";
+import { sendSuccess, sendError } from "../utils/response";
+import { parsePagination } from "../utils/pagination";
 
-const table = 'dea_points';
 
-export const getDeaPoints = async (_: Request, res: Response) => {
+export const getDeaPoints = async (req: Request, res: Response) => {
     try {
-        const pool = await connect();
-        const [result] = await pool.query(`SELECT * FROM ${table}`)
-        res.json(result)
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ message: 'Internal server error' })
-    }
-}
-
-export const createDeaPoint = async (req: Request, res: Response) => {
-    const { user_id, title, description, latitude, longitude }: DeaPoints = req.body;
-    try {
-        const pool = await connect();
-        await pool.query(
-            `INSERT INTO ${table} (user_id, title, description, latitude, longitude) VALUES (?, ?, ?, ?, ?)`,
-            [user_id, title, description, latitude, longitude]
-        );
-        res.json({ message: 'DEA Point created' });
+        const { limit, offset } = parsePagination(req.query.limit, req.query.offset);
+        const points = await DeaPointService.getAll(limit, offset);
+        sendSuccess(res, points);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        sendError(res, 'Internal server error');
+    }
+};
+
+export const createDeaPoint = async (req: Request, res: Response) => {
+    const { title, description, latitude, longitude } = req.body;
+    const user_id = req.user?.id;
+
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
+        return;
+    }
+
+    try {
+        const point = await DeaPointService.create({
+            user_id,
+            title,
+            description,
+            latitude: Number(latitude),
+            longitude: Number(longitude),
+        });
+        sendSuccess(res, point, null, 201);
+    } catch (error) {
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
+    }
+};
+
+export const updateDeaPoint = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const user_id = req.user?.id;
+
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
+        return;
+    }
+
+    try {
+        const point = await DeaPointService.update(Number(id), user_id, req.body);
+        sendSuccess(res, point);
+    } catch (error) {
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
+    }
+};
+
+export const deleteDeaPoint = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const user_id = req.user?.id;
+
+    if (!user_id) {
+        sendError(res, 'Authentication required', 401);
+        return;
+    }
+
+    try {
+        await DeaPointService.delete(Number(id), user_id);
+        sendSuccess(res, { message: 'DeaPoint deleted successfully' });
+    } catch (error) {
+        const err = error as Error & { statusCode?: number };
+        sendError(res, err.message, err.statusCode || 500);
     }
 };

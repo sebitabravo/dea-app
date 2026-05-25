@@ -6,9 +6,9 @@ import { BottomSheetProvider } from '@/presentation/context/BottomSheetContext';
 import { CreateDeaPointScreen } from '@/presentation/features/MapScreen/screens/CreateDeaPointScreen';
 import { CreatePostScreen } from '@/presentation/features/PostsScreen/screens/CreatePostScreen';
 import { MyBottomTab } from './MyBottomTab';
-import { AppStackParamList } from './navigation';
+import { MyStackParamList } from './navigation';
 
-const Stack = createNativeStackNavigator<AppStackParamList>();
+const Stack = createNativeStackNavigator<MyStackParamList>();
 
 export function MyStack() {
     return (
@@ -19,9 +19,9 @@ export function MyStack() {
                         headerShown: false,
                     }}
                 >
-                    <Stack.Screen name="Main" component={MyBottomTab} />
+                    <Stack.Screen name="Home" component={MyBottomTab} />
                     <Stack.Screen
-                        name="CreatePoint"
+                        name="CreateDeaPoint"
                         component={CreateDeaPointScreen}
                         options={{
                             presentation: 'fullScreenModal',

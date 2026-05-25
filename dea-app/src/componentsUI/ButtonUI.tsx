@@ -7,7 +7,7 @@ interface ButtonUIProps extends Omit<PressableProps, 'onPress' | 'onPressIn' | '
     color?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
     size?: 'sm' | 'md' | 'lg';
     radius?: 'full' | 'lg' | 'md' | 'sm' | 'none';
-    variant?: 'solid' | 'bordered' | 'shadow';
+    variant?: 'solid' | 'outline' | 'flat' | 'bordered' | 'shadow';
     haptics?: 'none' | 'soft' | 'light' | 'medium' | 'heavy' | 'rigid';
     animation?: 'none' | 'spring' | 'timing';
     children: ReactNode;
@@ -17,14 +17,15 @@ interface ButtonUIProps extends Omit<PressableProps, 'onPress' | 'onPressIn' | '
     onPressIn?: (event?: GestureResponderEvent) => void;
     onPressOut?: (event?: GestureResponderEvent) => void;
     className?: string;
+    isDisabled?: boolean;
 }
 
-export function ButtonUI2({
+export function ButtonUI({
     color = 'default',
     size = 'sm',
     radius = 'lg',
     variant = 'solid',
-    haptics = 'soft',
+    haptics = 'none',
     animation = 'spring',
     children,
     startContent,
@@ -33,19 +34,17 @@ export function ButtonUI2({
     onPressIn,
     onPressOut,
     className,
+    isDisabled = false,
     ...rest
 }: ButtonUIProps) {
-    // Usar useSharedValue para animaciones
     const animatedValue = useSharedValue(1);
 
-    // Definir estilo animado usando useAnimatedStyle
     const animatedStyle = useAnimatedStyle(() => {
         return {
             transform: [{ scale: animatedValue.value }],
         };
     });
 
-    // Definir funciones para manejar las animaciones
     const handlePressIn = (event?: GestureResponderEvent) => {
         if (onPressIn) onPressIn(event);
         switch (animation) {
@@ -84,12 +83,10 @@ export function ButtonUI2({
         }
     };
 
-    // Manejar presiones del botón y activar haptics si es necesario
     const handleOnPress = (event?: GestureResponderEvent) => {
+        if (isDisabled) return;
         if (onPress) onPress(event);
         switch (haptics) {
-            case 'none':
-                break;
             case 'soft':
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
                 break;
@@ -114,39 +111,48 @@ export function ButtonUI2({
         <Animated.View style={animatedStyle}>
             <Pressable
                 {...rest}
+                disabled={isDisabled}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 onPress={handleOnPress}
                 className={className || `
-          flex flex-row justify-center items-center m-1 space-x-1
-          ${color === 'default' && 'bg-default'} 
-          ${color === 'primary' && 'bg-primary'}
-          ${color === 'secondary' && 'bg-secondary'}
-          ${color === 'success' && 'bg-success'}
-          ${color === 'warning' && 'bg-warning'}
-          ${color === 'danger' && 'bg-danger'}
-          ${size === 'sm' && 'px-2 py-1'}
-          ${size === 'md' && 'px-3 py-2'}
-          ${size === 'lg' && 'px-4 py-3'}
-          ${radius === 'full' && 'rounded-full'}
-          ${radius === 'lg' && 'rounded-2xl'}
-          ${radius === 'md' && 'rounded-xl'}
-          ${radius === 'sm' && 'rounded-md'}
-          ${radius === 'none' && 'rounded-none'}
-          ${variant === 'solid' && ''}
-          ${variant === 'bordered' && `bg-transparent border-2 border-${color}`}
-          ${variant === 'shadow' && 'shadow-sm shadow-opacity-50 shadow-offset-2 shadow-radius-4'}
-
-        `}
+                    flex flex-row justify-center items-center m-1 space-x-1
+                    ${color === 'default' && 'bg-default'}
+                    ${color === 'primary' && 'bg-primary'}
+                    ${color === 'secondary' && 'bg-secondary'}
+                    ${color === 'success' && 'bg-success'}
+                    ${color === 'warning' && 'bg-warning'}
+                    ${color === 'danger' && 'bg-danger'}
+                    ${size === 'sm' && 'px-2 py-1 min-h-[44px] min-w-[44px]'}
+                    ${size === 'md' && 'px-3 py-2 min-h-[44px] min-w-[44px]'}
+                    ${size === 'lg' && 'px-4 py-3 min-h-[44px] min-w-[44px]'}
+                    ${radius === 'full' && 'rounded-full'}
+                    ${radius === 'lg' && 'rounded-2xl'}
+                    ${radius === 'md' && 'rounded-xl'}
+                    ${radius === 'sm' && 'rounded-md'}
+                    ${radius === 'none' && 'rounded-none'}
+                    ${variant === 'solid' && ''}
+                    ${variant === 'outline' && color === 'primary' && 'bg-transparent border-2 border-primary'}
+                    ${variant === 'outline' && color === 'secondary' && 'bg-transparent border-2 border-secondary'}
+                    ${variant === 'flat' && color === 'primary' && 'bg-primaryLight'}
+                    ${variant === 'flat' && color === 'secondary' && 'bg-secondaryLight'}
+                    ${variant === 'bordered' && `bg-transparent border-2 border-${color}`}
+                    ${variant === 'shadow' && 'shadow-sm shadow-opacity-50 shadow-offset-2 shadow-radius-4'}
+                    ${isDisabled ? 'opacity-50' : ''}
+                `}
             >
                 {startContent}
                 <Text
                     className={`
-            font-semibold
-            ${variant === 'solid' && 'text-white'}
-            ${variant === 'bordered' && `text-${color}`}
-            ${variant === 'shadow' && `text-white`}
-          `}
+                        font-semibold
+                        ${variant === 'solid' && 'text-white'}
+                        ${variant === 'outline' && color === 'primary' && 'text-primary font-bold'}
+                        ${variant === 'outline' && color === 'secondary' && 'text-secondary font-bold'}
+                        ${variant === 'flat' && color === 'primary' && 'text-primaryDark font-bold'}
+                        ${variant === 'flat' && color === 'secondary' && 'text-secondaryDark font-bold'}
+                        ${variant === 'bordered' && `text-${color}`}
+                        ${variant === 'shadow' && 'text-white'}
+                    `}
                 >
                     {children}
                 </Text>

@@ -1,13 +1,13 @@
 import { Router } from "express";
 import * as deaPointsController from '../controllers/deaPoints.controller';
+import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 const route = 'dea-points';
 
-// Obtenemos todos los puntos DEA
 router.get(`/${route}`, deaPointsController.getDeaPoints);
-
-// Creamos un nuevo punto DEA
-router.post(`/${route}`, deaPointsController.createDeaPoint);
+router.post(`/${route}`, authMiddleware, deaPointsController.createDeaPoint);
+router.put(`/${route}/:id`, authMiddleware, deaPointsController.updateDeaPoint);
+router.delete(`/${route}/:id`, authMiddleware, deaPointsController.deleteDeaPoint);
 
 export default router;

@@ -1,6 +1,5 @@
-
 import { AuthStackParamList } from '@/app/navigation/navigation';
-import { ButtonUI2 } from '@/componentsUI/Button2';
+import { ButtonUI } from '@/componentsUI/ButtonUI';
 import { AuthLayout } from '@/presentation/layouts/AuthLayout';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,7 +16,6 @@ export function AuthScreen() {
         <AuthLayout
             className='flex flex-1 items-center justify-center'
         >
-
             <Image source={require('@/app/assets/images/dea-logo.jpg')} style={{ width: 200, height: 200 }} />
 
             <Text
@@ -29,18 +27,16 @@ export function AuthScreen() {
             </View>
 
             <View className='flex space-y-4'>
-                <View className='w-screen px-10
-                '>
-                    <ButtonUI2
+                <View className='w-screen px-10'>
+                    <ButtonUI
                         className='h-12 bg-primaryGreen'
                         onPress={() => navigate('Register')}
+                        accessibilityLabel="Continuar al registro"
                     >
                         <Text className='text-white font-bold text-lg'>Continuar</Text>
-                    </ButtonUI2>
+                    </ButtonUI>
                 </View>
             </View>
-
-
         </AuthLayout>
     )
 }
